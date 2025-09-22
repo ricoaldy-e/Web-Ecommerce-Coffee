@@ -1,0 +1,2 @@
+# Folder untuk helper / library backend.
+# Contoh: prisma.js (koneksi database), auth.js (middleware), dll.
