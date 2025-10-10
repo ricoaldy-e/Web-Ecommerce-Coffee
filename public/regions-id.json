@@ -1,0 +1,167 @@
+{
+  "provinces": [
+    {
+      "name": "DKI Jakarta",
+      "kota_dan_kabupaten": [
+        "Jakarta Pusat",
+        "Jakarta Utara",
+        "Jakarta Barat",
+        "Jakarta Timur",
+        "Jakarta Selatan",
+        "Kepulauan Seribu"
+      ]
+    },
+    {
+      "name": "Jawa Barat",
+      "kota_dan_kabupaten": [
+        "Bandung",
+        "Bandung Barat",
+        "Bekasi",
+        "Bogor",
+        "Ciamis",
+        "Cianjur",
+        "Cirebon",
+        "Garut",
+        "Indramayu",
+        "Karawang",
+        "Kuningan",
+        "Majalengka",
+        "Pangandaran",
+        "Purwakarta",
+        "Subang",
+        "Sukabumi",
+        "Sumedang",
+        "Tasikmalaya",
+        "Kota Bandung",
+        "Kota Banjar",
+        "Kota Bekasi",
+        "Kota Bogor",
+        "Kota Cimahi",
+        "Kota Cirebon",
+        "Kota Depok",
+        "Kota Sukabumi",
+        "Kota Tasikmalaya"
+      ]
+    },
+    {
+      "name": "Jawa Tengah",
+      "kota_dan_kabupaten": [
+        "Banjarnegara",
+        "Banyumas",
+        "Batang",
+        "Blora",
+        "Boyolali",
+        "Brebes",
+        "Cilacap",
+        "Demak",
+        "Grobogan",
+        "Jepara",
+        "Karanganyar",
+        "Kebumen",
+        "Kendal",
+        "Klaten",
+        "Kudus",
+        "Magelang",
+        "Pati",
+        "Pekalongan",
+        "Pemalang",
+        "Purbalingga",
+        "Purworejo",
+        "Rembang",
+        "Semarang",
+        "Sragen",
+        "Sukoharjo",
+        "Tegal",
+        "Temanggung",
+        "Wonogiri",
+        "Wonosobo",
+        "Kota Magelang",
+        "Kota Pekalongan",
+        "Kota Salatiga",
+        "Kota Semarang",
+        "Kota Surakarta",
+        "Kota Tegal"
+      ]
+    },
+    {
+      "name": "DI Yogyakarta",
+      "kota_dan_kabupaten": [
+        "Bantul",
+        "Gunungkidul",
+        "Kulon Progo",
+        "Sleman",
+        "Kota Yogyakarta"
+      ]
+    },
+    {
+      "name": "Jawa Timur",
+      "kota_dan_kabupaten": [
+        "Bangkalan",
+        "Banyuwangi",
+        "Blitar",
+        "Bojonegoro",
+        "Bondowoso",
+        "Gresik",
+        "Jember",
+        "Jombang",
+        "Kediri",
+        "Lamongan",
+        "Lumajang",
+        "Madiun",
+        "Magetan",
+        "Malang",
+        "Mojokerto",
+        "Nganjuk",
+        "Ngawi",
+        "Pacitan",
+        "Pamekasan",
+        "Pasuruan",
+        "Ponorogo",
+        "Probolinggo",
+        "Sampang",
+        "Sidoarjo",
+        "Situbondo",
+        "Sumenep",
+        "Trenggalek",
+        "Tuban",
+        "Tulungagung",
+        "Kota Batu",
+        "Kota Blitar",
+        "Kota Kediri",
+        "Kota Madiun",
+        "Kota Malang",
+        "Kota Mojokerto",
+        "Kota Pasuruan",
+        "Kota Probolinggo",
+        "Kota Surabaya"
+      ]
+    },
+    {
+      "name": "Banten",
+      "kota_dan_kabupaten": [
+        "Lebak",
+        "Pandeglang",
+        "Serang",
+        "Tangerang",
+        "Kota Cilegon",
+        "Kota Serang",
+        "Kota Tangerang",
+        "Kota Tangerang Selatan"
+      ]
+    },
+    {
+      "name": "Bali",
+      "kota_dan_kabupaten": [
+        "Badung",
+        "Bangli",
+        "Buleleng",
+        "Gianyar",
+        "Jembrana",
+        "Karangasem",
+        "Klungkung",
+        "Tabanan",
+        "Kota Denpasar"
+      ]
+    }
+  ]
+}
