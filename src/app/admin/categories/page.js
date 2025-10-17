@@ -41,6 +41,7 @@ function Row({ c, onUpdated, onDelete }) {
         body: JSON.stringify({ name: name.trim(), slug: slug.trim() }),
       })
       onUpdated()
+      alert("✅ Kategori diperbarui")
     } catch (e) {
       alert("Gagal update: " + e.message)
     } finally {
@@ -49,35 +50,56 @@ function Row({ c, onUpdated, onDelete }) {
   }
 
   return (
-    <li className="border p-3 rounded">
+    <li className="bg-white border border-amber-200 rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-200">
       <div className="flex justify-between items-start">
         <div>
-          <div className="font-semibold">
-            {c.name} {c.deletedAt && <span className="text-red-600 text-xs">(deleted)</span>}
+          <div className="text-amber-900 font-semibold text-base">
+            {c.name}{" "}
+            {c.deletedAt && (
+              <span className="text-red-600 text-xs">(deleted)</span>
+            )}
           </div>
-          <div className="text-sm">Slug: {c.slug}</div>
+          <div className="text-sm text-amber-700/80">Slug: {c.slug || "-"}</div>
         </div>
         {!c.deletedAt && (
-          <button className="px-2 py-1 border rounded" onClick={() => onDelete(c.id)}>
+          <button
+            className="text-sm px-3 py-1.5 border border-amber-300 rounded-lg text-amber-800 hover:bg-amber-50 transition-colors"
+            onClick={() => onDelete(c.id)}
+          >
             Soft Delete
           </button>
         )}
       </div>
 
       {!c.deletedAt && (
-        <div className="mt-3 grid gap-2 sm:grid-cols-2">
-          <input className="border px-2 py-1" placeholder="Nama" value={name} onChange={e => setName(e.target.value)} />
-          <input className="border px-2 py-1" placeholder="Slug" value={slug} onChange={e => setSlug(e.target.value)} />
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <input
+            className="border border-amber-300 bg-amber-50 px-3 py-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+            placeholder="Nama"
+            value={name}
+            onChange={e => setName(e.target.value)}
+          />
+          <input
+            className="border border-amber-300 bg-amber-50 px-3 py-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+            placeholder="Slug"
+            value={slug}
+            onChange={e => setSlug(e.target.value)}
+          />
           <div className="sm:col-span-2 flex gap-2">
             <button
-              className="px-3 py-1 rounded bg-black text-white disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-amber-600 text-white hover:bg-amber-700 disabled:opacity-50 text-sm font-medium shadow-sm"
               onClick={update}
               disabled={!changed || saving}
               type="button"
             >
               {saving ? "Menyimpan..." : "Update"}
             </button>
-            <button className="px-3 py-1 rounded border" type="button" onClick={reset} disabled={saving}>
+            <button
+              className="px-4 py-2 rounded-lg border border-amber-300 hover:bg-amber-50 text-sm text-amber-800"
+              type="button"
+              onClick={reset}
+              disabled={saving}
+            >
               Cancel
             </button>
           </div>
@@ -111,7 +133,8 @@ export default function AdminCategoriesPage() {
         body: JSON.stringify({ name, slug }),
       })
       setName(""); setSlug("")
-      load()
+      await load()
+      alert("✅ Kategori dibuat")
     } catch (e2) {
       alert("Gagal buat kategori: " + e2.message)
     } finally {
@@ -123,30 +146,59 @@ export default function AdminCategoriesPage() {
     if (!confirm("Soft delete kategori ini? (Ditolak jika masih dipakai produk)")) return
     try {
       await fetchAdminJSON(`/api/admin/categories/${id}`, { method: "DELETE" })
-      load()
+      await load()
     } catch (e2) {
       alert("Gagal delete: " + e2.message)
     }
   }
 
   return (
-    <main>
-      <h1 className="text-2xl font-bold mb-4">Admin • Categories</h1>
+    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3 bg-gradient-to-r from-amber-900 to-amber-800 text-white p-4 rounded-xl shadow-lg">
+        <h1 className="text-2xl font-bold">Admin • Orders</h1>
+      </div>
 
-      <form onSubmit={create} className="border p-3 rounded mb-6 grid gap-2 max-w-md">
-        <div className="font-semibold">Tambah Kategori</div>
-        <input className="border px-2 py-1" placeholder="Nama" value={name} onChange={e => setName(e.target.value)} />
-        <input className="border px-2 py-1" placeholder="Slug (opsional)" value={slug} onChange={e => setSlug(e.target.value)} />
-        <button className="px-3 py-1 bg-black text-white rounded w-fit" type="submit" disabled={creating}>
+      {/* Create form */}
+      <form
+        onSubmit={create}
+        className="bg-white border border-amber-200 rounded-xl p-5 shadow-sm hover:shadow-lg transition-all duration-200 grid gap-3 max-w-lg"
+      >
+        <div className="uppercase text-xs font-semibold tracking-wide text-amber-600">
+          Tambah Kategori
+        </div>
+        <input
+          className="border border-amber-300 bg-amber-50 px-3 py-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+          placeholder="Nama"
+          value={name}
+          onChange={e => setName(e.target.value)}
+        />
+        <input
+          className="border border-amber-300 bg-amber-50 px-3 py-2 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500 outline-none text-sm"
+          placeholder="Slug (opsional)"
+          value={slug}
+          onChange={e => setSlug(e.target.value)}
+        />
+        <button
+          className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg w-fit text-sm font-medium shadow-sm"
+          type="submit"
+          disabled={creating}
+        >
           {creating ? "Menyimpan..." : "Buat"}
         </button>
       </form>
 
-      <ul className="space-y-3">
-        {list.map(c => (
-          <Row key={c.id} c={c} onUpdated={load} onDelete={del} />
-        ))}
-      </ul>
+      {/* List */}
+      <section>
+        <div className="uppercase text-xs font-semibold tracking-wide text-amber-600 mb-3">
+          Daftar Kategori
+        </div>
+        <ul className="space-y-4">
+          {list.map(c => (
+            <Row key={c.id} c={c} onUpdated={load} onDelete={del} />
+          ))}
+        </ul>
+      </section>
     </main>
   )
 }

@@ -11,15 +11,30 @@ export default function AdminShell({ children }) {
   const close = useCallback(() => setOpen(false), [])
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-neutral-950">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-yellow-100 via-amber-100 to-yellow-50 text-neutral-900">
+      {/* === Topbar === */}
       <AdminTopbar onToggleSidebar={toggle} />
-      <div className="mx-auto max-w-[120rem] px-4 sm:px-6 lg:px-8">
-        <div className="relative md:grid md:grid-cols-[16rem_1fr] md:gap-6">
-          <AdminSidebar open={open} onClose={close} />
-          <main className="pt-4 md:pt-6 md:pl-4">
+
+      {/* === Content wrapper === */}
+      <div className="flex-1 w-full mx-auto max-w-[120rem] flex flex-col md:flex-row">
+        {/* Sidebar */}
+        <AdminSidebar open={open} onClose={close} />
+
+        {/* Main content */}
+        <main
+          className="
+            flex-1 
+            p-4 md:p-6 
+            bg-white/60 
+            backdrop-blur-sm 
+            rounded-tl-2xl md:rounded-none
+            shadow-inner
+          "
+        >
+          <div className="bg-white/80 border border-amber-300 rounded-2xl p-6 shadow-md">
             {children}
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
     </div>
   )

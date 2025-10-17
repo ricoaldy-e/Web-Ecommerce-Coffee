@@ -23,10 +23,10 @@ export default function AdminSidebar({ open, onClose }) {
       <Link
         href={item.href}
         className={[
-          "block rounded-lg px-3 py-2 text-sm transition-colors",
+          "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
           active
-            ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-            : "hover:bg-gray-100 dark:hover:bg-neutral-900"
+            ? "bg-gradient-to-r from-amber-700 to-amber-600 text-white shadow-md"
+            : "text-white hover:bg-amber-700/60 hover:text-white"
         ].join(" ")}
       >
         {item.label}
@@ -45,23 +45,38 @@ export default function AdminSidebar({ open, onClose }) {
         ].join(" ")}
       />
 
-      {/* Drawer / Static */}
+      {/* Sidebar Drawer */}
       <aside
         className={[
-          "fixed z-50 md:z-0 md:static top-0 md:top-auto h-full md:h-auto",
-          "w-72 md:w-64 bg-white dark:bg-neutral-950 border-r dark:border-neutral-800 md:border-0",
+          "fixed z-50 md:z-0 md:static top-0 h-full md:h-auto",
+          "w-72 md:w-64 bg-gradient-to-b from-amber-900 to-amber-800 text-white shadow-xl",
           "transition-transform md:transition-none",
           open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         ].join(" ")}
       >
-        <div className="h-14 md:hidden" />
-        <div className="p-4 md:p-0 md:pt-4 md:pl-2">
-          <nav className="grid gap-1">
-            {nav.map((item) => <Item key={item.href} item={item} />)}
-          </nav>
-          <div className="mt-6 border-t dark:border-neutral-800 pt-4 text-xs text-neutral-500 dark:text-neutral-400">
-            © {new Date().getFullYear()} Coffee Admin
-          </div>
+        {/* Header */}
+        <div className="px-5 py-4 border-b border-amber-700 flex items-center justify-between">
+          <h2 className="text-lg font-bold tracking-wide flex items-center gap-2">
+             <span>Admin Panel</span>
+          </h2>
+          <button
+            onClick={onClose}
+            className="md:hidden text-amber-100 hover:text-white text-xl"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Nav links */}
+        <nav className="p-4 space-y-1 bg-amber-900/20 backdrop-blur-sm">
+          {nav.map((item) => (
+            <Item key={item.href} item={item} />
+          ))}
+        </nav>
+
+        {/* Footer */}
+        <div className="mt-auto p-4 border-t border-amber-700/60 text-xs text-amber-200">
+          <div>© {new Date().getFullYear()} Coffee Admin</div>
         </div>
       </aside>
     </>

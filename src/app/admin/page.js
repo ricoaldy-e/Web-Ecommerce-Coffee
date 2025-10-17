@@ -5,14 +5,13 @@ import { useEffect, useMemo, useState } from "react"
 
 function Card({ title, children }) {
   return (
-    <div className="card p-4">
-      <div className="text-xs uppercase tracking-wide text-neutral-500 dark:text-neutral-400 mb-1">{title}</div>
-      <div className="text-2xl font-semibold">{children}</div>
+    <div className="bg-white border border-amber-200 rounded-xl shadow-md hover:shadow-lg transition p-4">
+      <div className="text-xs uppercase tracking-wide text-amber-600 mb-1">{title}</div>
+      <div className="text-2xl font-semibold text-amber-900">{children}</div>
     </div>
   )
 }
 
-// Bar chart sederhana (tanpa lib)
 function BarChart({ data, valueKey = "value", labelKey = "label", height = 140 }) {
   const max = Math.max(1, ...data.map(d => Number(d[valueKey] || 0)))
   const barW = 28
@@ -20,10 +19,9 @@ function BarChart({ data, valueKey = "value", labelKey = "label", height = 140 }
   const width = data.length * (barW + gap) + gap
 
   return (
-    <div className="border dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 shadow-sm p-3">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto">
-        {/* Axis baseline */}
-        <line x1="0" y1={height - 24} x2={width} y2={height - 24} stroke="currentColor" opacity="0.2" />
+    <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3">
+      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto text-amber-700">
+        <line x1="0" y1={height - 24} x2={width} y2={height - 24} stroke="currentColor" opacity="0.3" />
         {data.map((d, i) => {
           const v = Number(d[valueKey] || 0)
           const h = Math.round((v / max) * (height - 34))
@@ -31,8 +29,16 @@ function BarChart({ data, valueKey = "value", labelKey = "label", height = 140 }
           const y = height - 24 - h
           return (
             <g key={i}>
-              <rect x={x} y={y} width={barW} height={h} rx="4" className="fill-current" opacity="0.9" />
-              <text x={x + barW / 2} y={height - 8} fontSize="10" textAnchor="middle" className="opacity-70">
+              <rect
+                x={x}
+                y={y}
+                width={barW}
+                height={h}
+                rx="4"
+                className="fill-amber-600 hover:fill-amber-700 transition"
+                opacity="0.9"
+              />
+              <text x={x + barW / 2} y={height - 8} fontSize="10" textAnchor="middle" className="fill-amber-900 opacity-70">
                 {String(d[labelKey]).slice(5)}
               </text>
             </g>
@@ -66,13 +72,14 @@ export default function AdminDashboard() {
   const revenuePerDay = useMemo(() => (data?.perDay || []).map(d => ({ label: d.date, value: d.revenue })), [data])
 
   return (
-    <main className="space-y-6">
-      <div className="flex items-center gap-3">
+    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 p-6 space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3 bg-gradient-to-r from-amber-900 to-amber-800 text-white p-4 rounded-xl shadow-lg">
         <h1 className="text-2xl font-bold">Admin • Dashboard</h1>
-        <div className="ml-auto">
-          <label className="mr-2 text-sm text-neutral-600 dark:text-neutral-300">Rentang:</label>
+        <div className="ml-auto flex items-center gap-2">
+          <label className="text-sm opacity-80">Rentang:</label>
           <select
-            className="border dark:border-neutral-800 bg-white dark:bg-neutral-900 rounded px-2 py-1 text-sm"
+            className="bg-white/20 text-white rounded px-2 py-1 text-sm hover:bg-white/30 transition"
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
           >
@@ -84,15 +91,13 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {err && <p className="text-red-600 dark:text-red-400">{err}</p>}
+      {err && <p className="text-red-600 font-semibold">{err}</p>}
 
       {data && (
         <>
           {/* Summary cards */}
           <div className="grid sm:grid-cols-3 gap-4">
-            <Card title="Total Pesanan">
-              {data.totals.totalOrders.toLocaleString("id-ID")}
-            </Card>
+            <Card title="Total Pesanan">{data.totals.totalOrders.toLocaleString("id-ID")}</Card>
             <Card title="Total Pendapatan">
               Rp {Math.round(data.totals.totalRevenue).toLocaleString("id-ID")}
             </Card>
@@ -104,34 +109,43 @@ export default function AdminDashboard() {
           {/* Charts */}
           <div className="grid md:grid-cols-2 gap-4">
             <div>
-              <div className="font-semibold mb-2">Pesanan per Hari</div>
+              <div className="font-semibold text-amber-900 mb-2 border-b-2 border-amber-600 pb-1">
+                Pesanan per Hari
+              </div>
               <BarChart data={ordersPerDay} />
             </div>
             <div>
-              <div className="font-semibold mb-2">Pendapatan per Hari</div>
-              {/* Gunakan value yang sama (sudah diolah) */}
+              <div className="font-semibold text-amber-900 mb-2 border-b-2 border-amber-600 pb-1">
+                Pendapatan per Hari
+              </div>
               <BarChart data={revenuePerDay} />
             </div>
           </div>
 
           {/* Top Produk */}
-          <div className="border dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 shadow-sm p-3">
-            <div className="font-semibold mb-2">Top Produk (Qty)</div>
+          <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3">
+            <div className="font-semibold text-amber-900 mb-2 border-b-2 border-amber-600 pb-1">
+              Top Produk (Qty)
+            </div>
             {data.topProducts.length === 0 ? (
-              <p className="opacity-70">Belum ada data.</p>
+              <p className="opacity-70 text-amber-800">Belum ada data.</p>
             ) : (
               <table className="w-full border-collapse text-sm">
-                <thead>
-                  <tr className="bg-gray-50 dark:bg-neutral-950/50">
-                    <th className="text-left border-b dark:border-neutral-800 p-2">Produk</th>
-                    <th className="text-right border-b dark:border-neutral-800 p-2" style={{ width: 120 }}>Qty</th>
+                <thead className="bg-amber-50">
+                  <tr>
+                    <th className="text-left border-b border-amber-200 p-2 text-amber-900">Produk</th>
+                    <th className="text-right border-b border-amber-200 p-2 text-amber-900" style={{ width: 120 }}>
+                      Qty
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data.topProducts.map((p) => (
-                    <tr key={p.productId} className="border-b last:border-b-0 dark:border-neutral-800">
-                      <td className="p-2">{p.name}</td>
-                      <td className="p-2 text-right">{p.qty.toLocaleString("id-ID")}</td>
+                    <tr key={p.productId} className="border-b last:border-b-0 border-amber-100 hover:bg-amber-50 transition">
+                      <td className="p-2 text-amber-900">{p.name}</td>
+                      <td className="p-2 text-right text-amber-900">
+                        {p.qty.toLocaleString("id-ID")}
+                      </td>
                     </tr>
                   ))}
                 </tbody>
@@ -141,17 +155,21 @@ export default function AdminDashboard() {
 
           {/* Distribusi Pembayaran */}
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="border dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 shadow-sm p-3">
-              <div className="font-semibold mb-2">Pembayaran per Metode</div>
-              <ul className="list-disc pl-5 space-y-0.5">
+            <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3">
+              <div className="font-semibold text-amber-900 mb-2 border-b-2 border-amber-600 pb-1">
+                Pembayaran per Metode
+              </div>
+              <ul className="list-disc pl-5 space-y-0.5 text-amber-800">
                 <li>COD: {data.payments.byMethod.COD}</li>
                 <li>Transfer Bank: {data.payments.byMethod.BANK_TRANSFER}</li>
                 <li>E-Wallet: {data.payments.byMethod.EWALLET}</li>
               </ul>
             </div>
-            <div className="border dark:border-neutral-800 rounded-xl bg-white dark:bg-neutral-900 shadow-sm p-3">
-              <div className="font-semibold mb-2">Status Pembayaran</div>
-              <ul className="list-disc pl-5 space-y-0.5">
+            <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3">
+              <div className="font-semibold text-amber-900 mb-2 border-b-2 border-amber-600 pb-1">
+                Status Pembayaran
+              </div>
+              <ul className="list-disc pl-5 space-y-0.5 text-amber-800">
                 <li>PENDING: {data.payments.byStatus.PENDING}</li>
                 <li>SUCCESS: {data.payments.byStatus.SUCCESS}</li>
                 <li>FAILED: {data.payments.byStatus.FAILED}</li>
