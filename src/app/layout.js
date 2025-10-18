@@ -33,9 +33,9 @@ export default async function RootLayout({ children }) {
         <main className="flex-1">
           {children}
         </main>
-
         {/* Footer */}
         <Footer className="bg-gradient-to-r from-amber-800 to-amber-900 text-amber-100 border-t border-amber-700" />
+
       </body>
     </html>
   )
