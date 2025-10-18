@@ -5,27 +5,61 @@ import { useEffect, useMemo, useState } from "react"
 
 function Card({ title, children }) {
   return (
-    <div className="bg-white border border-amber-200 rounded-xl shadow-md hover:shadow-lg transition p-4">
+    <div className="bg-white border border-amber-200 rounded-xl shadow-md hover:shadow-lg transition p-4 sm:p-5">
       <div className="text-xs uppercase tracking-wide text-amber-600 mb-1">{title}</div>
       <div className="text-2xl font-semibold text-amber-900">{children}</div>
     </div>
   )
 }
 
-function BarChart({ data, valueKey = "value", labelKey = "label", height = 140 }) {
+// 🔸 fungsi bantu biar sumbu Y rapi (0, 5, 10, 15 ...)
+function niceStep(max, steps = 4) {
+  if (max <= 0) return 1
+  const rough = max / steps
+  const pow10 = 10 ** Math.floor(Math.log10(rough))
+  const opts = [1, 2, 2.5, 5, 10].map(c => c * pow10)
+  return opts.find(c => c >= rough) ?? opts.at(-1)
+}
+
+// 🔸 BarChart: responsive, axis Y, label X tidak menumpuk, hanya tampil angka jika > 0
+function BarChart({ data, valueKey = "value", labelKey = "label", height = 160 }) {
   const max = Math.max(1, ...data.map(d => Number(d[valueKey] || 0)))
-  const barW = 28
-  const gap = 10
-  const width = data.length * (barW + gap) + gap
+  const steps = 4
+  const stepVal = niceStep(max, steps)
+  const niceMax = stepVal * steps
+
+  const gap = 8
+  const barW = data.length > 40 ? 14 : data.length > 25 ? 20 : 28
+  const leftPadding = 40
+  const width = data.length * (barW + gap) + gap + leftPadding
+
+  const yLabels = Array.from({ length: steps + 1 }, (_, i) => stepVal * i)
+  const showEvery = data.length > 40 ? 5 : data.length > 25 ? 3 : 1
 
   return (
-    <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3">
-      <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto text-amber-700">
-        <line x1="0" y1={height - 24} x2={width} y2={height - 24} stroke="currentColor" opacity="0.3" />
+    <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3 overflow-x-auto scrollbar-thin scrollbar-thumb-amber-400 scrollbar-track-transparent">
+      <svg viewBox={`0 0 ${width} ${height}`} className="min-w-full text-amber-700">
+        {/* Garis grid + label Y */}
+        {yLabels.map((val, i) => {
+          const y = height - 24 - (i / steps) * (height - 40)
+          return (
+            <g key={i}>
+              <line x1={leftPadding} y1={y} x2={width} y2={y} stroke="currentColor" opacity="0.15" />
+              <text x={leftPadding - 5} y={y + 4} fontSize="9" textAnchor="end" className="fill-amber-800 opacity-80">
+                {val.toLocaleString("id-ID")}
+              </text>
+            </g>
+          )
+        })}
+
+        {/* Garis dasar */}
+        <line x1={leftPadding} y1={height - 24} x2={width} y2={height - 24} stroke="currentColor" opacity="0.3" />
+
+        {/* Batang + nilai di atas bar (hanya jika > 0) */}
         {data.map((d, i) => {
           const v = Number(d[valueKey] || 0)
-          const h = Math.round((v / max) * (height - 34))
-          const x = gap + i * (barW + gap)
+          const h = Math.round((v / niceMax) * (height - 40))
+          const x = leftPadding + gap + i * (barW + gap)
           const y = height - 24 - h
           return (
             <g key={i}>
@@ -38,9 +72,31 @@ function BarChart({ data, valueKey = "value", labelKey = "label", height = 140 }
                 className="fill-amber-600 hover:fill-amber-700 transition"
                 opacity="0.9"
               />
-              <text x={x + barW / 2} y={height - 8} fontSize="10" textAnchor="middle" className="fill-amber-900 opacity-70">
-                {String(d[labelKey]).slice(5)}
-              </text>
+              {/* tampilkan angka hanya jika nilainya > 0 */}
+              {v > 0 && (
+                <text
+                  x={x + barW / 2}
+                  y={y - 4}
+                  fontSize="9"
+                  textAnchor="middle"
+                  className="fill-amber-800"
+                >
+                  {v.toLocaleString("id-ID")}
+                </text>
+              )}
+
+              {/* label tanggal di bawah */}
+              {barW >= 16 && i % showEvery === 0 && (
+                <text
+                  x={x + barW / 2}
+                  y={height - 8}
+                  fontSize="9"
+                  textAnchor="middle"
+                  className="fill-amber-900 opacity-70"
+                >
+                  {String(d[labelKey]).slice(5)}
+                </text>
+              )}
             </g>
           )
         })}
@@ -74,24 +130,35 @@ export default function AdminDashboard() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3 bg-gradient-to-r from-amber-900 to-amber-800 text-white p-4 rounded-xl shadow-lg">
-        <h1 className="text-2xl font-bold">Admin • Dashboard</h1>
-        <div className="ml-auto flex items-center gap-2">
-          <label className="text-sm opacity-80">Rentang:</label>
+      <div className="flex flex-wrap items-center gap-3 bg-gradient-to-r from-amber-900 to-amber-800 text-white p-4 rounded-xl shadow-lg">
+        <h1 className="text-2xl font-bold flex-1 min-w-[180px]">Admin • Dashboard</h1>
+        <div className="flex w-full sm:w-auto items-center gap-2 sm:ml-auto">
+          <label htmlFor="range" className="text-sm opacity-80 whitespace-nowrap">Rentang:</label>
           <select
-            className="bg-white/20 text-white rounded px-2 py-1 text-sm hover:bg-white/30 transition"
+            id="range"
+            className="w-full sm:w-auto bg-white/20 text-white rounded px-2 py-1 text-sm hover:bg-white/30 transition appearance-none focus:bg-white focus:text-amber-900"
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
           >
-            <option value={7}>7 hari</option>
-            <option value={14}>14 hari</option>
-            <option value={30}>30 hari</option>
-            <option value={60}>60 hari</option>
+            <option className="text-amber-900 bg-white" value={7}>7 hari</option>
+            <option className="text-amber-900 bg-white" value={14}>14 hari</option>
+            <option className="text-amber-900 bg-white" value={30}>30 hari</option>
           </select>
         </div>
       </div>
 
-      {err && <p className="text-red-600 font-semibold">{err}</p>}
+      {/* Error */}
+      {err && (
+        <div className="bg-red-50 border border-red-200 text-red-700 rounded-lg p-3">
+          <div className="flex items-center justify-between">
+            <p className="font-semibold">{err}</p>
+            <button
+              onClick={() => setDays(d => d)}
+              className="px-3 py-1.5 text-sm rounded bg-red-600 text-white hover:bg-red-700"
+            >Coba lagi</button>
+          </div>
+        </div>
+      )}
 
       {data && (
         <>
@@ -122,35 +189,34 @@ export default function AdminDashboard() {
             </div>
           </div>
 
-          {/* Top Produk */}
+          {/* Hasil Penjualan Produk */}
           <div className="border border-amber-200 rounded-xl bg-white shadow-md p-3">
             <div className="font-semibold text-amber-900 mb-2 border-b-2 border-amber-600 pb-1">
-              Top Produk (Qty)
+              Hasil Penjualan Produk
             </div>
-            {data.topProducts.length === 0 ? (
-              <p className="opacity-70 text-amber-800">Belum ada data.</p>
-            ) : (
+
+            <div className="max-h-[420px] overflow-auto rounded-lg border border-amber-100">
               <table className="w-full border-collapse text-sm">
-                <thead className="bg-amber-50">
+                <thead className="bg-amber-50 sticky top-0 z-10">
                   <tr>
                     <th className="text-left border-b border-amber-200 p-2 text-amber-900">Produk</th>
-                    <th className="text-right border-b border-amber-200 p-2 text-amber-900" style={{ width: 120 }}>
-                      Qty
+                    <th className="text-right border-b border-amber-200 p-2 text-amber-900" style={{ width: 140 }}>
+                      Qty Terjual
                     </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {data.topProducts.map((p) => (
+                  {data.productSales.map((p) => (
                     <tr key={p.productId} className="border-b last:border-b-0 border-amber-100 hover:bg-amber-50 transition">
                       <td className="p-2 text-amber-900">{p.name}</td>
                       <td className="p-2 text-right text-amber-900">
-                        {p.qty.toLocaleString("id-ID")}
+                        {Number(p.qty).toLocaleString("id-ID")}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            )}
+            </div>
           </div>
 
           {/* Distribusi Pembayaran */}

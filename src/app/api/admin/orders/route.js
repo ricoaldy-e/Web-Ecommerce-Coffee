@@ -25,12 +25,17 @@ export async function GET(req) {
   else if (sort === "highest") orderBy = [{ total: "desc" }, { createdAt: "desc" }]
   else if (sort === "lowest") orderBy = [{ total: "asc" }, { createdAt: "desc" }]
 
+  // jika q angka → cocokkan ke id (global) dan orderNo (per user)
+  const numQ = Number(q)
+  const isNum = Number.isFinite(numQ)
+
   const where = {
     ...(status ? { status } : {}),
     ...(q
       ? {
           OR: [
-            { orderNo: Number.isFinite(Number(q)) ? Number(q) : -1 },
+            ...(isNum ? [{ id: numQ }] : []),         // 🔹 nomor global
+            ...(isNum ? [{ orderNo: numQ }] : []),    // 🔹 nomor per-user
             { user: { is: { email: { contains: q } } } },
             { address: { is: { recipient: { contains: q } } } },
           ],

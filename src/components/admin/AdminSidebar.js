@@ -3,7 +3,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { useEffect } from "react"
+// import { useEffect } from "react" // Dihapus
 
 const nav = [
   { href: "/admin", label: "Dashboard", match: (p) => p === "/admin" },
@@ -15,13 +15,16 @@ const nav = [
 export default function AdminSidebar({ open, onClose }) {
   const pathname = usePathname()
 
-  useEffect(() => { if (open) onClose?.() }, [pathname]) // auto-close di mobile
+  // Dihapus: useEffect yang lama tidak diperlukan lagi
+  // useEffect(() => { if (open) onClose?.() }, [pathname]) 
 
   const Item = ({ item }) => {
     const active = item.match(pathname || "")
     return (
       <Link
         href={item.href}
+        // Ditambahkan: onClick untuk langsung menutup sidebar saat link diklik
+        onClick={onClose} 
         className={[
           "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
           active
@@ -45,19 +48,22 @@ export default function AdminSidebar({ open, onClose }) {
         ].join(" ")}
       />
 
-      {/* Sidebar Drawer */}
+      {/* Sidebar */}
       <aside
         className={[
-          "fixed z-50 md:z-0 md:static top-0 h-full md:h-auto",
-          "w-72 md:w-64 bg-gradient-to-b from-amber-900 to-amber-800 text-white shadow-xl",
+          // Mobile: drawer fixed
+          "fixed z-50 top-0 h-full w-72 bg-gradient-to-b from-amber-900 to-amber-800 text-white shadow-xl",
           "transition-transform md:transition-none",
-          open ? "translate-x-0" : "-translate-x-full md:translate-x-0"
+          open ? "translate-x-0" : "-translate-x-full",
+          // Desktop: sticky
+          "md:static md:translate-x-0 md:w-64",
+          "md:sticky md:top-14 md:self-start md:h-[calc(100vh-3.5rem)] md:overflow-y-auto md:z-0"
         ].join(" ")}
       >
         {/* Header */}
         <div className="px-5 py-4 border-b border-amber-700 flex items-center justify-between">
           <h2 className="text-lg font-bold tracking-wide flex items-center gap-2">
-             <span>Admin Panel</span>
+              <span>Admin Panel</span>
           </h2>
           <button
             onClick={onClose}
@@ -76,7 +82,7 @@ export default function AdminSidebar({ open, onClose }) {
 
         {/* Footer */}
         <div className="mt-auto p-4 border-t border-amber-700/60 text-xs text-amber-200">
-          <div>© {new Date().getFullYear()} Coffee Admin</div>
+          <div>© {new Date().getFullYear()} Coffesst Admin</div>
         </div>
       </aside>
     </>

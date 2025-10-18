@@ -30,8 +30,7 @@ export default async function RootLayout({ children }) {
           {children}
         </main>
 
-        {/* Footer otomatis tersembunyi di /admin, /auth, /checkout, /cart (diatur di komponen Footer) */}
-        <Footer />
+        <Footer/>
       </body>
     </html>
   )
