@@ -1,7 +1,7 @@
 import HeroVideo from "@/components/home/HeroVideo"
 import BestSellers from "@/components/home/BestSellers"
 import USP from "@/components/home/USP"
-import StoreLocation from "@/components/home/StoreLocation" // ⬅️ tambah ini
+import StoreLocation from "@/components/home/StoreLocation" 
 
 export const metadata = { title: "Coffee • Home" }
 

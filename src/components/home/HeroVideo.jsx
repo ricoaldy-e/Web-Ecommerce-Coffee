@@ -1,4 +1,3 @@
-// src/components/home/HeroVideo.jsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -30,17 +29,16 @@ export default function HeroVideo({
     else v.pause()
   }, [canPlay])
 
-  // Trigger animation on mount
   useEffect(() => {
     setIsVisible(true)
   }, [])
 
   return (
-    <section className="relative min-h-[80vh] lg:min-h-[86vh] w-full overflow-hidden bg-neutral-950">
-      {/* Video */}
+    <section className="relative min-h-[85vh] w-full overflow-hidden bg-gradient-to-b from-amber-900/70 via-amber-950/70 to-amber-900">
+      {/* Video background */}
       <video
         ref={videoRef}
-        className="absolute inset-0 h-full w-full object-cover"
+        className="absolute inset-0 h-full w-full object-cover brightness-[0.6] contrast-[1.05] saturate-[1.2]"
         autoPlay
         muted
         loop
@@ -49,53 +47,81 @@ export default function HeroVideo({
         poster={poster}
         aria-hidden="true"
       >
-        {sources.map(s => <source key={s.src} src={s.src} type={s.type} />)}
-        Your browser does not support the video tag.
+        {sources.map(s => (
+          <source key={s.src} src={s.src} type={s.type} />
+        ))}
       </video>
 
-      {/* Overlay: darken + top gradient */}
-      <div className="absolute inset-0 bg-neutral-950/40" />
-      <div className="absolute inset-0 bg-gradient-to-t from-neutral-950/85 via-neutral-950/45 to-transparent" />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-amber-950/85 via-amber-900/60 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-transparent to-amber-50/40" />
 
-      {/* Fade bottom supaya peralihan ke konten halus */}
-      <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 sm:h-36 bg-gradient-to-b from-transparent to-neutral-950" />
-
-      {/* Content */}
-      <div className="relative z-10 mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="pt-24 pb-16 sm:pt-28 sm:pb-20 lg:pt-36 lg:pb-24">
-          <h1 className={`text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight animate-on-scroll fade-in-up delay-long-1 ${isVisible ? 'animated' : ''}`}>
-            Hari yang Baik,<br className="hidden sm:block" />
-            <span className="text-neutral-300">Ditemani Kopi Terbaik.</span>
+      {/* Konten utama */}
+      <div className="relative z-10 mx-auto max-w-5xl px-6 sm:px-8 lg:px-10 text-center">
+        <div className="pt-28 pb-20 sm:pt-36 sm:pb-28">
+          <h1
+            className={`font-extrabold tracking-tight text-4xl sm:text-5xl lg:text-6xl leading-tight transition-all duration-700 ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+            }`}
+          >
+            <span className="block text-amber-200 drop-shadow-[0_2px_3px_rgba(0,0,0,0.4)]">
+              Hari yang Baik,
+            </span>
+            <span className="block text-amber-50">
+              Ditemani <span className="text-amber-400">Kopi Terbaik.</span>
+            </span>
           </h1>
-          <p className={`mt-4 max-w-2xl text-sm sm:text-base text-neutral-300 animate-on-scroll fade-in-up delay-long-2 ${isVisible ? 'animated' : ''}`}>
+
+          <p
+            className={`mt-6 max-w-2xl mx-auto text-base sm:text-lg text-amber-100/90 font-light transition-all duration-700 ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+            }`}
+          >
             Pilih biji & bubuk kopi asli Nusantara. Segar, terkurasi, dan siap kirim.
           </p>
 
-          <div className={`mt-6 flex flex-wrap gap-3 animate-on-scroll fade-in-up delay-long-3 ${isVisible ? 'animated' : ''}`}>
+          <div
+            className={`mt-8 flex justify-center transition-all duration-700 ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+            }`}
+          >
             <Link
               href="/products"
-              className="inline-flex items-center justify-center rounded-xl px-4 py-2.5 text-sm font-medium
-                         bg-white text-neutral-900 hover:bg-neutral-200 transition"
+              className="inline-flex items-center justify-center rounded-full bg-amber-600 hover:bg-amber-700 text-white text-base sm:text-lg font-semibold px-6 py-3 shadow-lg shadow-amber-900/40 transition-transform hover:scale-105"
             >
               Belanja Sekarang
             </Link>
           </div>
 
-          <div className={`mt-6 flex items-center gap-3 text-xs text-neutral-400 animate-on-scroll fade-in-up delay-long-4 ${isVisible ? 'animated' : ''}`}>
-            <span className="inline-flex items-center gap-2">☕ 100+ varian kopi</span>
-            <span>•</span><span>Pengiriman cepat</span><span>•</span><span>Dukungan e-wallet & COD</span>
+          <div
+            className={`mt-8 flex justify-center items-center flex-wrap gap-3 text-sm text-amber-200 transition-all duration-700 ${
+              isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+            }`}
+          >
+            <span className="inline-flex items-center gap-2">
+              ☕ 100+ varian kopi
+            </span>
+            <span>•</span>
+            <span>Pengiriman cepat</span>
+            <span>•</span>
+            <span>Dukungan e-wallet & COD</span>
           </div>
         </div>
       </div>
-      {/* Scroll indicator */}
+
+      {/* Scroll indicator - diperbaiki */}
       <div
-        className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-20
-                    flex flex-col items-center text-neutral-400 hover:text-neutral-200 transition-colors
-                    animate-on-scroll fade-in-up delay-long-5 ${isVisible ? 'animated' : ''}`}
+        className={`absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center transition-opacity duration-700 ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
       >
-        <a href="#best" className="group flex flex-col items-center gap-1" aria-label="Scroll ke Best Sellers">
+        <a
+          href="#best"
+          className="group flex flex-col items-center gap-1 hover:text-amber-100 transition-colors"
+          aria-label="Scroll ke Best Sellers"
+        >
           <svg
-            className="w-6 h-6 animate-bounce-smooth text-current"
+            className="w-6 h-6 animate-bounce-smooth text-amber-200 drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
@@ -103,7 +129,7 @@ export default function HeroVideo({
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
           </svg>
-          <span className="text-xs opacity-80 group-hover:opacity-100 transition-opacity">
+          <span className="text-xs font-medium text-amber-100 drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)] group-hover:text-amber-50 transition-opacity">
             Scroll
           </span>
         </a>

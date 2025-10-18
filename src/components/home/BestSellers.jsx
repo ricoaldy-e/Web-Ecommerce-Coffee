@@ -41,7 +41,7 @@ export default function BestSellers({ title = "Best Sellers" }) {
     return () => { stop = true }
   }, [])
 
-  // Reveal on view (or immediately if reduce motion)
+  // Reveal on scroll
   useEffect(() => {
     if (prefersReduce) {
       setIsVisible(true)
@@ -54,7 +54,7 @@ export default function BestSellers({ title = "Best Sellers" }) {
           observer.disconnect()
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -10% 0px" }
+      { threshold: 0.15, rootMargin: "0px 0px -10% 0px" }
     )
     if (sectionRef.current) observer.observe(sectionRef.current)
     return () => observer.disconnect()
@@ -64,29 +64,61 @@ export default function BestSellers({ title = "Best Sellers" }) {
     <section
       id="best"
       ref={sectionRef}
-      className="mt-25 mx-auto max-w-8xl px-4 sm:px-6 lg:px-8 py-10"
+      className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-10 pb-16 relative"
     >
-      <div className={`mb-4 flex items-end justify-between gap-3 animate-on-scroll fade-in-up ${isVisible ? "animated" : ""}`}>
-        <h2 className="text-xl sm:text-2xl font-semibold">{title}</h2>
+      {/* Background lembut */}
+      <div className="absolute inset-0 bg-gradient-to-b from-amber-50/50 via-white to-amber-50/60 pointer-events-none rounded-2xl" />
+
+      {/* Header */}
+      <div
+        className={`relative mb-8 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-3 transition-all duration-700 ${
+          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+        }`}
+      >
+        <div>
+          <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-amber-900 drop-shadow-sm leading-snug">
+            {title}
+          </h2>
+          <p className="mt-1 text-sm sm:text-base text-amber-800/80">
+            Pilihan kopi terlaris, disukai pelanggan setia kami ☕
+          </p>
+
+          {/* Garis bawah elegan */}
+          <div className="mt-4 h-px w-full max-w-md bg-gradient-to-r from-amber-400/50 to-transparent" />
+        </div>
+
         <Link
           href="/products"
-          aria-label="Lihat semua produk"
-          className="text-sm text-neutral-300 underline underline-offset-4 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neutral-700/60"
+          className="inline-flex items-center text-sm font-medium text-amber-800 hover:text-amber-900 border border-amber-300 hover:border-amber-400 rounded-full px-4 py-2 transition-all hover:shadow-sm whitespace-nowrap"
         >
-          Lihat semua
+          Lihat semua →
         </Link>
       </div>
 
+      {/* Grid Produk */}
       {loading ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 sm:gap-6">
           {Array.from({ length: 8 }).map((_, i) => (
-            <div key={i} className="rounded-xl border border-neutral-800 bg-neutral-900 animate-pulse h-64 sm:h-72" />
+            <div
+              key={i}
+              className="h-64 sm:h-72 bg-gradient-to-b from-amber-100/60 to-amber-50 animate-pulse rounded-2xl border border-amber-100 shadow-sm"
+            >
+              <div className="h-3/4 bg-amber-200/40 rounded-t-2xl" />
+              <div className="p-3 space-y-2">
+                <div className="h-4 bg-amber-300/40 rounded w-2/3" />
+                <div className="h-3 bg-amber-200/50 rounded w-1/2" />
+              </div>
+            </div>
           ))}
         </div>
       ) : items.length === 0 ? (
-        <p className="text-neutral-400">Belum ada produk.</p>
+        <p className="text-amber-700 text-center py-10">Belum ada produk tersedia.</p>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 sm:gap-4">
+        <div
+          className={`grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-5 sm:gap-6 transition-all duration-700 ${
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+          }`}
+        >
           {items.map((p, idx) => (
             <ProductCard key={p.id} p={p} index={idx} isVisible={isVisible} />
           ))}

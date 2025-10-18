@@ -1,41 +1,47 @@
-// src/lib/storeConfig.js
-// ↑ Simpan di sini nomor rekening & e-wallet penjual.
-// Ganti nilai di bawah dengan data aslimu.
-
 export const paymentInfo = {
   bankAccounts: [
     {
       bank: "BCA",
       accountNumber: "1234567890",
-      accountName: "Rico Coffee",
+      accountName: "PT Daily Beans",
       note: "Cab. Jakarta"
     },
     {
       bank: "BRI",
       accountNumber: "777888999",
-      accountName: "Rico Coffee",
+      accountName: "PT Daily Beans",
       note: "Unit Pasar Minggu"
     },
-    // Tambahkan jika perlu...
+    {
+      bank: "Mandiri",
+      accountNumber: "9988776655",
+      accountName: "PT Daily Beans",
+      note: "KCP Diponegoro"
+    },
+
   ],
   ewallets: [
     {
       name: "DANA",
       number: "0812-3456-7890",
-      accountName: "Rico Coffee"
+      accountName: "PT Daily Beans"
     },
     {
       name: "OVO",
       number: "0813-2222-4444",
-      accountName: "Rico Coffee"
+      accountName: "PT Daily Beans"
     },
-    // Tambahkan jika perlu...
+    {
+      name: "GoPay",
+      number: "0815-9999-2222",
+      accountName: "PT Daily Beans"
+    },
   ],
   instructions: {
     transfer: [
       "Gunakan salah satu nomor rekening di bawah ini.",
       "Cantumkan No. Pesanan pada berita/remark transfer.",
-      "Setelah transfer, upload bukti untuk percepat verifikasi."
+      "Setelah transfer, upload bukti untuk mempercepat verifikasi."
     ],
     ewallet: [
       "Kirim ke nomor e-wallet di bawah ini.",

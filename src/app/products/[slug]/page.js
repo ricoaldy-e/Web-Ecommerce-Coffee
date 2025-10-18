@@ -1,8 +1,9 @@
-// src/app/products/[slug]/page.js
 "use client"
 
 import { useParams, useRouter } from "next/navigation"
 import { useEffect, useMemo, useState } from "react"
+import Image from "next/image"
+import { ArrowLeft, ShoppingCart, CreditCard } from "lucide-react"
 
 export default function ProductDetailPage() {
   const { slug } = useParams()
@@ -89,85 +90,159 @@ export default function ProductDetailPage() {
     window.location.href = "/checkout/confirm?buynow=1"
   }
 
-  if (loading) return <main className="p-6">Memuat produk...</main>
-  if (!product) return <main className="p-6">Produk tidak ditemukan.</main>
+  if (loading)
+    return (
+      <main className="p-10 text-center text-amber-800">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-600 mx-auto mb-4"></div>
+        Memuat produk...
+      </main>
+    )
+
+  if (!product)
+    return (
+      <main className="p-10 text-center text-amber-700">
+        Produk tidak ditemukan.
+      </main>
+    )
 
   return (
-    <main className="p-6 max-w-5xl mx-auto">
-      {/* Header + tombol kembali */}
-      <div className="flex items-start justify-between mb-4">
-        <h1 className="text-2xl font-bold">{product.name}</h1>
-        <button
-          onClick={() => router.back()}
-          className="px-3 py-1 border rounded text-sm hover:bg-gray-50"
-        >
-          Kembali
-        </button>
-      </div>
-
-      <div className="grid gap-6 md:grid-cols-2">
-        <div>
-          {product.imageUrl ? (
-            <img
-              src={product.imageUrl}
-              alt={product.name}
-              className="w-full max-h-[520px] object-contain border rounded bg-white"
-            />
-          ) : (
-            <div className="w-full h-80 bg-gray-100 flex items-center justify-center text-gray-500 border rounded">
-              Tidak ada gambar
-            </div>
-          )}
+    <main className="min-h-screen bg-gradient-to-b from-amber-50 to-orange-50 text-amber-900 p-6">
+      <div className="max-w-6xl mx-auto">
+        {/* Header + tombol kembali */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold">{product.name}</h1>
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-lg font-medium transition"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Kembali
+          </button>
         </div>
 
-        <div>
-          <div className="mt-1 text-sm text-gray-600">Kategori: {product.category?.name || "-"}</div>
-
-          <div className="mt-3">
-            <div className="text-2xl font-bold">Rp {price.toLocaleString("id-ID")}</div>
+        <div className="grid md:grid-cols-2 gap-10">
+          {/* Gambar Produk */}
+          <div className="bg-white rounded-xl border border-amber-200 shadow-md overflow-hidden flex items-center justify-center">
+            {product.imageUrl ? (
+              <div className="relative w-full h-[420px]">
+                <Image
+                  src={product.imageUrl}
+                  alt={product.name}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  priority
+                />
+              </div>
+            ) : (
+              <div className="w-full h-[420px] flex items-center justify-center text-amber-400">
+                Tidak ada gambar
+              </div>
+            )}
           </div>
 
-          <div className="mt-2 text-sm">
-            Status: <b className={soldOut ? "text-red-600" : "text-green-700"}>{statusText}</b> •
-            <span className="ml-2">Stok: {product.stock}</span>
-          </div>
+          {/* Detail Produk */}
+          <div>
+            <p className="text-sm text-amber-700 mb-2">
+              Kategori: {product.category?.name || "-"}
+            </p>
+            <p className="text-3xl font-bold text-amber-900">
+              Rp {price.toLocaleString("id-ID")}
+            </p>
 
-          {product.description && (
-            <div className="mt-4 whitespace-pre-line leading-relaxed">
-              {product.description}
+            <p className="mt-2 text-sm">
+              Status:{" "}
+              <b className={soldOut ? "text-red-600" : "text-green-700"}>
+                {statusText}
+              </b>{" "}
+              • <span className="ml-2">Stok: {product.stock}</span>
+            </p>
+
+            {product.description && (
+              <div className="mt-4 text-amber-800 whitespace-pre-line leading-relaxed">
+                {product.description}
+              </div>
+            )}
+
+            {/* Quantity */}
+            <div className="mt-6">
+              <div className="flex items-center gap-3">
+                <button
+                  className="w-8 h-8 bg-amber-200 text-amber-900 rounded-full flex items-center justify-center hover:bg-amber-300 transition disabled:opacity-50"
+                  onClick={dec}
+                  disabled={qty <= 1 || soldOut}
+                >
+                  −
+                </button>
+                <div className="w-14 text-center border border-amber-300 rounded-lg bg-white text-amber-900 py-1 font-semibold">
+                  {qty}
+                </div>
+                <button
+                  className="w-8 h-8 bg-amber-200 text-amber-900 rounded-full flex items-center justify-center hover:bg-amber-300 transition disabled:opacity-50"
+                  onClick={inc}
+                  disabled={qty >= (product.stock ?? 1) || soldOut}
+                >
+                  +
+                </button>
+              </div>
+
+              {/* Tombol Aksi */}
+              <div className="mt-6 grid sm:grid-cols-2 gap-3">
+                <button
+                  onClick={addToCart}
+                  disabled={soldOut}
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-gray-700 hover:bg-gray-800 text-white rounded-xl font-semibold transition disabled:opacity-50"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  Tambah ke Keranjang
+                </button>
+                <button
+                  onClick={buyNow}
+                  disabled={soldOut}
+                  className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-700 hover:to-amber-800 text-white rounded-xl font-semibold transition disabled:opacity-50"
+                >
+                  <CreditCard className="w-5 h-5" />
+                  Beli Sekarang
+                </button>
+              </div>
+
+              {soldOut && (
+                <p className="mt-2 text-sm text-red-600">Stok habis.</p>
+              )}
             </div>
-          )}
 
-          <div className="mt-6">
-            <div className="flex items-center gap-3">
-              <button className="px-2 py-1 border rounded disabled:opacity-50" onClick={dec} disabled={qty <= 1 || soldOut}>−</button>
-              <div className="min-w-[56px] px-2 py-1 text-center border rounded bg-white text-black select-none">{qty}</div>
-              <button className="px-2 py-1 border rounded disabled:opacity-50" onClick={inc} disabled={qty >= (product.stock ?? 1) || soldOut}>+</button>
+            {/* Informasi Produk */}
+            <div className="mt-8 border-t border-amber-200 pt-4 text-sm">
+              <div className="font-semibold mb-2">Informasi Produk</div>
+              <ul className="grid gap-1 text-amber-800">
+                <li>
+                  <span className="text-amber-700">ID Produk:</span> {product.id}
+                </li>
+                <li>
+                  <span className="text-amber-700">Slug:</span> {product.slug}
+                </li>
+                <li>
+                  <span className="text-amber-700">Kategori:</span>{" "}
+                  {product.category?.name || "-"}
+                </li>
+                <li>
+                  <span className="text-amber-700">Status:</span>{" "}
+                  {product.isActive === false ? "Nonaktif" : "Aktif"}
+                </li>
+                <li>
+                  <span className="text-amber-700">Dibuat:</span>{" "}
+                  {product.createdAt
+                    ? new Date(product.createdAt).toLocaleString("id-ID")
+                    : "-"}
+                </li>
+                <li>
+                  <span className="text-amber-700">Diperbarui:</span>{" "}
+                  {product.updatedAt
+                    ? new Date(product.updatedAt).toLocaleString("id-ID")
+                    : "-"}
+                </li>
+              </ul>
             </div>
-
-            <div className="mt-4 grid sm:grid-cols-2 gap-3">
-              <button className="px-3 py-2 rounded text-white disabled:opacity-50" style={{ backgroundColor: "#111827" }} disabled={soldOut} onClick={addToCart}>
-                Tambah ke Keranjang
-              </button>
-              <button className="px-3 py-2 rounded text-white disabled:opacity-50" style={{ backgroundColor: "#047857" }} disabled={soldOut} onClick={buyNow}>
-                Beli Sekarang
-              </button>
-            </div>
-
-            {soldOut && <p className="mt-2 text-sm text-red-600">Stok habis.</p>}
-          </div>
-
-          {/* Informasi produk yang relevan */}
-          <div className="mt-8 border-t pt-4 text-sm">
-            <div className="font-semibold mb-2">Informasi Produk</div>
-            <ul className="grid gap-1">
-              <li><span className="text-gray-600">ID Produk:</span> {product.id}</li>
-              <li><span className="text-gray-600">Slug:</span> {product.slug}</li>
-              <li><span className="text-gray-600">Kategori:</span> {product.category?.name || "-"}</li>
-              <li><span className="text-gray-600">Status:</span> {product.isActive === false ? "Nonaktif" : "Aktif"}</li>
-              <li><span className="text-gray-600">Dibuat:</span> {product.createdAt ? new Date(product.createdAt).toLocaleString("id-ID") : "-"}</li>
-              <li><span className="text-gray-600">Diperbarui:</span> {product.updatedAt ? new Date(product.updatedAt).toLocaleString("id-ID") : "-"}</li>
-            </ul>
           </div>
         </div>
       </div>

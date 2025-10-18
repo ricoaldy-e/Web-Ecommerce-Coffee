@@ -1,4 +1,3 @@
-// src/app/layout.js
 import "./globals.css"
 import Navbar from "@/components/Navbar"
 import RootNavbarGate from "@/components/RootNavbarGate"
@@ -8,30 +7,35 @@ import { getCurrentUser } from "@/lib/currentUser"
 export const runtime = "nodejs"
 export const metadata = {
   title: "E-commerce Coffee",
-  themeColor: "#0a0a0a",
+  themeColor: "#92400e", // warna amber tua
 }
 
 export default async function RootLayout({ children }) {
   const user = await getCurrentUser()
 
   return (
-    <html lang="id" className="dark" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
       <head>
-        {/* pastikan UI native ikut dark */}
-        <meta name="color-scheme" content="dark" />
+        {/* Warna UI bawaan disesuaikan agar sesuai tema amber */}
+        <meta name="color-scheme" content="light dark" />
+        <meta name="theme-color" content="#fff7ed" />
       </head>
-      {/* flex-col + flex-1 => footer nempel di bawah */}
-      <body className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col">
+
+      <body className="min-h-screen flex flex-col bg-gradient-to-b from-amber-50 via-orange-50 to-yellow-50 text-amber-900">
+        {/* Navbar (atas) */}
         <RootNavbarGate>
-          <Navbar initialUser={user} />
+          <div className="sticky top-0 z-50 shadow-md bg-gradient-to-r from-amber-900 to-amber-800 text-white">
+            <Navbar initialUser={user} />
+          </div>
         </RootNavbarGate>
 
+        {/* Konten utama */}
         <main className="flex-1">
           {children}
         </main>
 
-        {/* Footer otomatis tersembunyi di /admin, /auth, /checkout, /cart (diatur di komponen Footer) */}
-        <Footer />
+        {/* Footer */}
+        <Footer className="bg-gradient-to-r from-amber-800 to-amber-900 text-amber-100 border-t border-amber-700" />
       </body>
     </html>
   )

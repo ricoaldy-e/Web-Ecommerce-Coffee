@@ -35,24 +35,57 @@ export default function NavbarClient({ initialUser }) {
   if (pathname.startsWith("/admin")) return null
 
   if (!hydrated) {
-    return <nav className="p-4 border-b" />
+    return <nav className="p-4 border-b border-amber-200 bg-amber-50" />
   }
 
   const isUser  = user?.role === "USER"
   const isGuest = !user
 
   return (
-    <nav className="flex flex-wrap gap-4 p-4 border-b bg-neutral-950 border-neutral-800 text-neutral-100">
-      {/* Toko (guest & user) */}
-      <Link href="/">Home</Link>
-      <Link href="/products">Produk</Link>
+    <nav className="flex flex-wrap items-center gap-4 p-4 border-b border-amber-200 bg-amber-50 text-amber-900 shadow-sm backdrop-blur-sm">
+      {/* Brand */}
+      <Link 
+        href="/" 
+        className="font-bold text-lg text-amber-800 hover:text-amber-700 transition-colors"
+      >
+        Daily Beans
+      </Link>
+
+      {/* Menu utama */}
+      <Link 
+        href="/" 
+        className="hover:text-amber-700 transition-colors"
+      >
+        Home
+      </Link>
+      <Link 
+        href="/products" 
+        className="hover:text-amber-700 transition-colors"
+      >
+        Produk
+      </Link>
 
       {/* USER only */}
       {isUser && (
         <>
-          <Link href="/cart">Keranjang</Link>
-          <Link href="/orders">Pesanan Saya</Link>
-          <Link href="/profile">Profil</Link>
+          <Link 
+            href="/cart" 
+            className="hover:text-amber-700 transition-colors"
+          >
+            Keranjang
+          </Link>
+          <Link 
+            href="/orders" 
+            className="hover:text-amber-700 transition-colors"
+          >
+            Pesanan Saya
+          </Link>
+          <Link 
+            href="/profile" 
+            className="hover:text-amber-700 transition-colors"
+          >
+            Profil
+          </Link>
         </>
       )}
 
@@ -60,17 +93,32 @@ export default function NavbarClient({ initialUser }) {
 
       {/* Auth */}
       {isGuest ? (
-        <>
-          <Link href="/auth/login">Login</Link>
-          <Link href="/auth/register">Register</Link>
-        </>
+        <div className="flex gap-3">
+          <Link 
+            href="/auth/login" 
+            className="px-4 py-2 text-amber-700 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-colors"
+          >
+            Login
+          </Link>
+          <Link 
+            href="/auth/register" 
+            className="px-4 py-2 bg-amber-600 text-white hover:bg-amber-700 rounded-lg transition-colors shadow-sm"
+          >
+            Register
+          </Link>
+        </div>
       ) : (
-        <button
-          onClick={handleLogout}
-          className="px-3 py-1 border border-neutral-800 rounded bg-neutral-900 hover:bg-neutral-800"
-        >
-          Logout
-        </button>
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-amber-700">
+            Hi, {user.name || user.email}
+          </span>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 border border-amber-300 rounded-lg bg-amber-100 text-amber-800 hover:bg-amber-200 transition-colors"
+          >
+            Logout
+          </button>
+        </div>
       )}
     </nav>
   )
