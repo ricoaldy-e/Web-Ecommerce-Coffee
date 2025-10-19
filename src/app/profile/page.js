@@ -13,9 +13,11 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true)
 
   const [form, setForm] = useState({
-    recipient: "", phone: "",
+    recipient: "",
+    phone: "",
     street: "",
-    province: "", city: "",
+    province: "",
+    city: "",
     postalCode: "",
     isDefault: false,
     label: "",
@@ -36,10 +38,7 @@ export default function ProfilePage() {
   }
 
   useEffect(() => { load() }, [])
-
-  useEffect(() => {
-    loadRegions().then(setRegions)
-  }, [])
+  useEffect(() => { loadRegions().then(setRegions) }, [])
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target
@@ -47,31 +46,37 @@ export default function ProfilePage() {
   }
 
   const onProvinceInput = (e) => {
-    const value = e.target.value;
-    setForm(prev => ({ ...prev, province: value, city: "" }));
-    setProvinceCities(getCitiesForProvince(regions, value));
-  };
+    const value = e.target.value
+    setForm(prev => ({ ...prev, province: value, city: "" }))
+    setProvinceCities(getCitiesForProvince(regions, value))
+  }
 
   const addAddress = async () => {
-    const required = ["recipient","phone","street","province","city","postalCode","label"]
+    const required = ["recipient", "phone", "street", "province", "city", "postalCode", "label"]
     for (const k of required) {
       if (!form[k]) {
         alert("Lengkapi data alamat: " + k)
         return
       }
     }
-    
+
     const res = await fetch("/api/addresses", {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     })
+
     if (res.ok) {
       setForm({
-        recipient: "", phone: "",
-        street: "", province: "", city: "",
-        postalCode: "", isDefault: false, label: ""
+        recipient: "",
+        phone: "",
+        street: "",
+        province: "",
+        city: "",
+        postalCode: "",
+        isDefault: false,
+        label: "",
       })
       setProvinceCities([])
       load()
@@ -102,12 +107,10 @@ export default function ProfilePage() {
 
     if (res.ok) {
       setAddresses(prev => prev.filter(a => a.id !== id))
-      if (data.archived) {
-        alert("Alamat telah diarsipkan karena pernah dipakai di pesanan.")
-      }
-      return
+      if (data.archived) alert("Alamat telah diarsipkan karena pernah dipakai di pesanan.")
+    } else {
+      alert("Gagal hapus: " + (data.message || res.status))
     }
-    alert("Gagal hapus: " + (data.message || res.status))
   }
 
   if (isLoading) {
@@ -126,7 +129,7 @@ export default function ProfilePage() {
       <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center">
         <div className="text-center">
           <User className="w-16 h-16 text-amber-600 mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-amber-900 mb-2">Profile Tidak Ditemukan</h1>
+          <h1 className="text-2xl font-bold text-amber-900 mb-2">Profil Tidak Ditemukan</h1>
           <p className="text-amber-700">Silakan login terlebih dahulu</p>
         </div>
       </div>
@@ -134,31 +137,29 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 p-6">
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
+    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 py-10 px-4 sm:px-8">
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-4xl mx-auto"
+        transition={{ duration: 0.4 }}
+        className="max-w-5xl mx-auto space-y-8"
       >
         {/* Header Profile */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-amber-300 mb-6">
-          <div className="flex items-center gap-4 mb-6">
-            <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center">
-              <User className="w-8 h-8 text-white" />
-            </div>
-            <div>
-              <h1 className="text-2xl font-bold text-amber-900">Profil Saya</h1>
-              <p className="text-gray-600">Kelola informasi dan alamat pengiriman Anda</p>
+        <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-6 sm:p-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+          <div className="flex-shrink-0">
+            <div className="w-20 h-20 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center shadow-md">
+              <User className="w-10 h-10 text-white" />
             </div>
           </div>
-
-          <div className="grid md:grid-cols-2 gap-6">
-            <div className="space-y-3">
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+          <div className="flex-1 text-center sm:text-left">
+            <h1 className="text-3xl font-bold text-amber-900 mb-1">Profil Saya</h1>
+            <p className="text-gray-600 mb-4">Kelola informasi dan alamat pengiriman Anda</p>
+            <div className="grid sm:grid-cols-2 gap-4 max-w-md">
+              <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
                 <p className="text-sm text-amber-700 font-semibold">Email</p>
-                <p className="text-amber-900 font-medium">{user.email}</p>
+                <p className="text-amber-900 font-medium break-all">{user.email}</p>
               </div>
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+              <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
                 <p className="text-sm text-amber-700 font-semibold">Role</p>
                 <p className="text-amber-900 font-medium capitalize">{user.role.toLowerCase()}</p>
               </div>
@@ -166,11 +167,11 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Alamat Tersimpan */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-amber-300 mb-6">
+        {/* Daftar Alamat */}
+        <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-6 sm:p-8">
           <div className="flex items-center gap-3 mb-6">
             <MapPin className="w-6 h-6 text-amber-600" />
-            <h2 className="text-xl font-bold text-amber-900">Alamat Tersimpan</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-amber-900">Alamat Tersimpan</h2>
           </div>
 
           {addresses.length === 0 ? (
@@ -180,29 +181,29 @@ export default function ProfilePage() {
               <p className="text-amber-600 text-sm mt-1">Tambahkan alamat untuk memudahkan pengiriman</p>
             </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               {addresses.map((a, index) => (
                 <motion.div
                   key={a.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className={`p-4 rounded-xl border-2 transition-all ${
-                    a.isDefault 
-                      ? 'border-amber-500 bg-amber-50 shadow-md' 
-                      : 'border-amber-200 bg-amber-50/50'
+                  className={`p-5 rounded-xl border transition-all duration-200 ${
+                    a.isDefault
+                      ? "border-amber-500 bg-amber-50 shadow-md"
+                      : "border-amber-200 bg-amber-50/60 hover:border-amber-400"
                   }`}
                 >
-                  <div className="flex items-start justify-between mb-3">
+                  <div className="flex justify-between items-start mb-3">
                     <div className="flex items-center gap-2">
-                      {a.label === 'Rumah' ? (
+                      {a.label === "Rumah" ? (
                         <Home className="w-4 h-4 text-amber-600" />
                       ) : (
                         <Building className="w-4 h-4 text-amber-600" />
                       )}
                       <span className="font-semibold text-amber-900">{a.label}</span>
                       {a.isDefault && (
-                        <span className="bg-amber-500 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+                        <span className="bg-amber-500 text-white px-2 py-0.5 rounded-full text-xs font-bold flex items-center gap-1">
                           <Star className="w-3 h-3 fill-current" />
                           Default
                         </span>
@@ -210,19 +211,18 @@ export default function ProfilePage() {
                     </div>
                   </div>
 
-                  <div className="text-sm text-amber-800 space-y-1">
+                  <div className="text-sm text-amber-800 space-y-1 mb-4">
                     <p><span className="font-semibold">{a.recipient}</span> ({a.phone})</p>
                     <p>{a.street}</p>
                     <p>{a.city}, {a.province} {a.postalCode}</p>
                   </div>
 
-                  <div className="flex gap-2 mt-3">
+                  <div className="flex gap-2">
                     {!a.isDefault && (
                       <motion.button
                         onClick={() => setDefault(a.id)}
                         whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="px-3 py-1 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700 transition-all"
+                        className="flex-1 px-3 py-2 bg-amber-600 text-white rounded-lg text-sm font-semibold hover:bg-amber-700"
                       >
                         Jadikan Default
                       </motion.button>
@@ -230,8 +230,7 @@ export default function ProfilePage() {
                     <motion.button
                       onClick={() => delAddress(a.id)}
                       whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="px-3 py-1 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 transition-all flex items-center gap-1"
+                      className="flex-1 px-3 py-2 bg-red-100 text-red-600 rounded-lg text-sm font-semibold hover:bg-red-200 flex items-center justify-center gap-1"
                     >
                       <Trash2 className="w-3 h-3" />
                       Hapus
@@ -243,127 +242,101 @@ export default function ProfilePage() {
           )}
         </div>
 
-        {/* Tambah Alamat Baru */}
-        <div className="bg-white rounded-2xl shadow-xl p-6 border-2 border-amber-300">
+        {/* Tambah Alamat */}
+        <div className="bg-white rounded-2xl shadow-lg border border-amber-200 p-6 sm:p-8">
           <div className="flex items-center gap-3 mb-6">
             <Plus className="w-6 h-6 text-amber-600" />
-            <h2 className="text-xl font-bold text-amber-900">Tambah Alamat Baru</h2>
+            <h2 className="text-xl sm:text-2xl font-bold text-amber-900">Tambah Alamat Baru</h2>
           </div>
 
           <div className="grid gap-4 max-w-2xl">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-semibold text-amber-900 mb-2">
-                  Nama Penerima
-                </label>
+            {[
+              { label: "Nama Penerima", name: "recipient", placeholder: "Nama lengkap penerima" },
+              { label: "No. Telepon", name: "phone", placeholder: "Contoh: 081234567890" },
+            ].map((f) => (
+              <div key={f.name}>
+                <label className="block text-sm font-semibold text-amber-900 mb-2">{f.label}</label>
                 <input
-                  className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base"
-                  placeholder="Nama lengkap penerima"
-                  name="recipient"
-                  value={form.recipient}
+                  name={f.name}
+                  value={form[f.name]}
                   onChange={onChange}
-                  autoComplete="name"
+                  placeholder={f.placeholder}
+                  className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 outline-none transition-all text-amber-900"
                 />
               </div>
+            ))}
+
+            <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-amber-900 mb-2">
-                  No. Telepon
-                </label>
+                <label className="block text-sm font-semibold text-amber-900 mb-2">Provinsi</label>
                 <input
-                  className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base"
-                  placeholder="Contoh: 081234567890"
-                  name="phone"
-                  value={form.phone}
-                  onChange={onChange}
-                  autoComplete="tel"
+                  name="province"
+                  value={form.province}
+                  onChange={onProvinceInput}
+                  list="province-list"
+                  placeholder="Pilih provinsi"
+                  className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 outline-none"
                 />
+                <datalist id="province-list">
+                  {(regions.provinces || []).map(p => <option key={p.name} value={p.name} />)}
+                </datalist>
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-amber-900 mb-2">Kota/Kabupaten</label>
+                <input
+                  name="city"
+                  value={form.city}
+                  onChange={onChange}
+                  list="city-list"
+                  placeholder={form.province ? "Pilih kota" : "Pilih provinsi terlebih dahulu"}
+                  disabled={!form.province}
+                  className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 outline-none disabled:opacity-50"
+                />
+                <datalist id="city-list">
+                  {(provinceCities || []).map(c => <option key={c} value={c} />)}
+                </datalist>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-amber-900 mb-2">
-                Provinsi
-              </label>
+              <label className="block text-sm font-semibold text-amber-900 mb-2">Alamat Lengkap</label>
               <input
-                className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base"
-                placeholder="Pilih provinsi"
-                name="province"
-                value={form.province}
-                onChange={onProvinceInput}
-                list="province-list"
-                autoComplete="address-level1"
-              />
-              <datalist id="province-list">
-                {(regions.provinces || []).map(p => <option key={p.name} value={p.name} />)}
-              </datalist>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-amber-900 mb-2">
-                Kota/Kabupaten
-              </label>
-              <input
-                className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base disabled:opacity-50"
-                placeholder={form.province ? "Pilih kota" : "Pilih provinsi terlebih dahulu"}
-                name="city"
-                value={form.city}
-                onChange={onChange}
-                list="city-list"
-                disabled={!form.province}
-                autoComplete="address-level2"
-              />
-              <datalist id="city-list">
-                {(provinceCities || []).map(c => <option key={c} value={c} />)}
-              </datalist>
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-amber-900 mb-2">
-                Alamat Lengkap
-              </label>
-              <input
-                className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base"
-                placeholder="Jalan, nomor rumah, gedung, dll."
                 name="street"
                 value={form.street}
                 onChange={onChange}
-                autoComplete="street-address"
+                placeholder="Jalan, nomor rumah, gedung, dll."
+                className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 outline-none"
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-semibold text-amber-900 mb-2">
-                  Kode Pos
-                </label>
+                <label className="block text-sm font-semibold text-amber-900 mb-2">Kode Pos</label>
                 <input
-                  className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base"
-                  placeholder="Contoh: 12345"
                   name="postalCode"
                   value={form.postalCode}
                   onChange={onChange}
-                  autoComplete="postal-code"
+                  placeholder="Contoh: 12345"
+                  className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 outline-none"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-amber-900 mb-2">
-                  Label Alamat
-                </label>
+                <label className="block text-sm font-semibold text-amber-900 mb-2">Label Alamat</label>
                 <input
-                  className="w-full px-4 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all text-amber-900 placeholder-amber-600/60 text-base"
-                  placeholder="Contoh: Rumah, Kantor, Kos"
                   name="label"
                   value={form.label}
                   onChange={onChange}
+                  placeholder="Contoh: Rumah, Kantor, Kos"
+                  className="w-full px-4 py-3 rounded-lg border border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 outline-none"
                 />
               </div>
             </div>
 
             <label className="inline-flex items-center gap-3 mt-2">
-              <input 
-                type="checkbox" 
-                name="isDefault" 
-                checked={form.isDefault} 
+              <input
+                type="checkbox"
+                name="isDefault"
+                checked={form.isDefault}
                 onChange={onChange}
                 className="w-4 h-4 accent-amber-600"
               />
@@ -372,9 +345,9 @@ export default function ProfilePage() {
 
             <motion.button
               onClick={addAddress}
-              whileHover={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
-              whileTap={{ scale: 0.98 }}
-              className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-amber-500/25 transition-all duration-300 flex items-center justify-center gap-2 text-base mt-4"
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="w-full py-3 mt-4 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-amber-500/25 transition-all flex items-center justify-center gap-2"
             >
               <Plus className="w-5 h-5" />
               Simpan Alamat

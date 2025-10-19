@@ -1,4 +1,3 @@
-// src/components/admin/AdminShell.js
 "use client"
 
 import { useState, useCallback } from "react"
