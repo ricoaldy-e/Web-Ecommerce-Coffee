@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+COFFESST – Coffee E-Commerce Platform
 
-## Getting Started
+COFFESST is a modern coffee e-commerce application built using Next.js, Tailwind CSS, Prisma ORM, and MySQL.
+It provides a complete shopping experience for users and a fully functional admin dashboard for managing products, orders, and categories.
 
-First, run the development server:
+📌 Features
+👤 User
 
-```bash
+View products by category and detailed product pages
+
+Add products to cart and proceed to checkout
+
+Checkout with COD, Bank Transfer, or E-Wallet
+
+Order history & payment status tracking
+
+Login/Register and profile management
+
+Users must log in before checkout (automatic redirect to login page)
+
+🔐 Admin
+
+Access protected by middleware (only ADMIN role allowed)
+
+Dashboard showing:
+
+Total orders, total revenue, average order value (AOV)
+
+Sales charts for the last 7, 14, and 30 days
+
+Product sales data
+
+Manage Orders:
+
+Search, filter, and sort orders
+
+Update order status: PROCESSED, SHIPPED, COMPLETED, CANCELED
+
+Update payment status: PENDING, SUCCESS, FAILED
+
+View payment proof
+
+Manage Products:
+
+Add, edit, soft delete products
+
+View deleted products
+
+Manage Categories:
+
+Add, edit, delete categories
+
+View deleted categories
+
+⚙️ Installation & Setup
+git clone <repository-url>
+cd coffeesst
+npm install
+
+
+Create a .env file:
+
+DATABASE_URL="mysql://USER:PASSWORD@localhost:3306/coffeesst"
+JWT_SECRET="your_jwt_secret_key"
+
+
+Run database migration and development server:
+
+npx prisma migrate dev
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+Access the app at http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🗂 Folder Structure
+src/
+ ├─ app/
+ │   ├─ admin/        → Admin dashboard & management pages
+ │   ├─ api/          → API routes (auth, products, orders, payments, uploads)
+ │   ├─ cart/         → Shopping cart page
+ │   ├─ checkout/     → Checkout & payment page
+ │   ├─ profile/      → User profile & order history
+ │   └─ page.js       → Home page
+ ├─ components/       → UI components
+ ├─ lib/              → Prisma, auth handler, utilities
+ └─ middleware.js     → Route protection (user & admin)
 
-## Learn More
+🔒 Authentication & Middleware
 
-To learn more about Next.js, take a look at the following resources:
+JWT-based authentication with cookies
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Users must log in before checking out or accessing profile pages
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Unauthorized access redirects to the login page
 
-## Deploy on Vercel
+Admin routes are protected—non-admin users are automatically redirected
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+💾 Database
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Prisma ORM as database handler
+
+MySQL as primary database
+
+Soft delete implemented for products and categories (deletedAt field)
+
+Relations between User, Order, OrderItem, Product, Payment, and Category
+
+✅ Status & Future Improvements
+
+✔ Fully functional for basic e-commerce workflow
+⬜ Add product reviews & ratings
+⬜ Add upload validation & image compression
+⬜ Add chart filtering by category or product type
+⬜ Add email notification for order status updates
+
+📄 License
+
+This project is developed for educational and development purposes.
+Feel free to use, modify, or contribute.
