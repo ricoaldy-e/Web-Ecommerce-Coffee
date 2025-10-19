@@ -31,6 +31,7 @@ export default async function RootLayout({ children }) {
 
         {/* Konten utama */}
         <main className="flex-1">
+        <main className="flex-1 relative z-0"></main>
           {children}
         </main>
         {/* Footer */}

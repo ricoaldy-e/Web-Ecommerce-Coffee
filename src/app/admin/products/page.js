@@ -4,40 +4,48 @@
 import { useEffect, useState, useRef, useCallback } from "react"
 import { createPortal } from "react-dom"
 
-/* ========== Toast minimal, pojok kanan bawah ========== */
+/* ========== Toast profesional, muncul di ATAS & selalu terlihat ========== */
 function Toasts({ toasts, onClose }) {
-  return (
-    <div className="fixed bottom-4 right-4 z-[9999] space-y-2">
-      {toasts.map(t => (
-        <div
-          key={t.id}
-          className={[
-            "max-w-[22rem] rounded-lg shadow-lg px-3 py-2 text-sm border",
-            t.type === "error"
-              ? "bg-red-50 border-red-200 text-red-800"
-              : t.type === "success"
-                ? "bg-emerald-50 border-emerald-200 text-emerald-800"
-                : "bg-amber-50 border-amber-200 text-amber-800",
-          ].join(" ")}
-          role="status"
-          aria-live="polite"
-        >
-          <div className="flex items-start gap-2">
-            <span className="mt-0.5">
-              {t.type === "error" ? "⚠️" : t.type === "success" ? "✅" : "ℹ️"}
-            </span>
-            <div className="flex-1">{t.message}</div>
-            <button
-              className="ml-2 text-xs opacity-70 hover:opacity-100"
-              onClick={() => onClose(t.id)}
-              aria-label="Tutup notifikasi"
-            >
-              ✕
-            </button>
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => setMounted(true), [])
+  if (!mounted) return null
+
+  return createPortal(
+    <div className="fixed top-4 inset-x-0 z-[9999] pointer-events-none">
+      <div className="mx-auto w-full max-w-md px-3 space-y-2">
+        {toasts.map(t => (
+          <div
+            key={t.id}
+            role="alert"
+            aria-live="assertive"
+            className={[
+              "pointer-events-auto rounded-lg shadow-lg px-3.5 py-2.5 text-sm border transition-all duration-200",
+              "bg-white", // base for contrast
+              t.type === "error"
+                ? "border-red-300 text-red-800"
+                : t.type === "success"
+                  ? "border-emerald-300 text-emerald-800"
+                  : "border-amber-300 text-amber-800",
+            ].join(" ")}
+          >
+            <div className="flex items-start gap-2">
+              <span className="mt-0.5">
+                {t.type === "error" ? "⚠️" : t.type === "success" ? "✅" : "ℹ️"}
+              </span>
+              <div className="flex-1">{t.message}</div>
+              <button
+                className="ml-2 text-xs opacity-70 hover:opacity-100"
+                onClick={() => onClose(t.id)}
+                aria-label="Tutup notifikasi"
+              >
+                ✕
+              </button>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+    </div>,
+    document.body
   )
 }
 
@@ -242,21 +250,39 @@ export default function AdminProductsPage() {
       setCreating(true)
       let imageUrl = null
       if (createImageFile) imageUrl = await uploadImage(createImageFile)
+
       const body = {
         name: form.name.trim(),
         slug: form.slug.trim(),
-        price: Number(form.price),
-        stock: Number(form.stock),
-        categoryId: Number(form.categoryId),
-        description: form.description || null,
+        price: form.price === "" ? null : Number(form.price),
+        stock: form.stock === "" ? 0 : Number(form.stock),
+        categoryId: form.categoryId === "" ? null : Number(form.categoryId),
+        description: form.description?.trim() || null,
         imageUrl,
         isActive: !!form.isActive,
       }
-      await fetchAdminJSON("/api/products", {
+      if (!body.name || !body.slug || body.price == null || body.categoryId == null) {
+        pushToast("Nama, slug, harga, dan kategori wajib diisi.", "error")
+        setCreating(false)
+        return
+      }
+      if (Number.isNaN(body.price) || body.price < 0) {
+        pushToast("Harga harus angka ≥ 0.", "error")
+        setCreating(false)
+        return
+      }
+      if (Number.isNaN(body.stock) || body.stock < 0) {
+        pushToast("Stok harus angka ≥ 0.", "error")
+        setCreating(false)
+        return
+      }
+
+      await fetchAdminJSON("/api/admin/products", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       })
+
       setForm({ name: "", slug: "", price: "", stock: "", categoryId: "", description: "", isActive: true })
       setCreateImageFile(null)
       await load()

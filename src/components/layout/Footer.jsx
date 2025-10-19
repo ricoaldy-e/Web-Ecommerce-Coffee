@@ -27,7 +27,7 @@ function onlyDigits(s = "") {
   return s.replace(/[^\d]/g, "")
 }
 
-export default function Footer() {
+export default function Footer({ className = "" }) {
   const pathname = usePathname()
   const sectionRef = useRef(null)
   const [visible, setVisible] = useState(false)
@@ -53,7 +53,13 @@ export default function Footer() {
   const mailto = `mailto:${EMAIL}`
 
   return (
-    <footer className="mt-16">
+    <footer
+      className={[
+        // pastikan footer selalu di atas layer konten (menghindari ketindihan hero/overlay)
+        "mt-16 relative z-10",
+        className // <- className dari layout akan kepakai
+      ].join(" ").trim()}
+    >
       <div className="w-full h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
       <div className="bg-gradient-to-b from-amber-900 to-amber-950 text-amber-50">
         <div

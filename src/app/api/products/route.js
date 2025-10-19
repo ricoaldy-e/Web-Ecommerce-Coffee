@@ -1,89 +1,86 @@
 import { prisma } from '@/lib/prisma'
 import { NextResponse } from 'next/server'
-import { getCurrentUser } from '@/lib/currentUser'
 
-// ========================================
-// GET /api/products?q=search&category=slug
-// (mengembalikan array agar kompatibel dengan FE sekarang)
-// ========================================
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+export const fetchCache = 'force-no-store'
+
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url)
-    const qRaw = searchParams.get("q") || ""
-    const categoryRaw = searchParams.get("category") || ""
+    const q = (searchParams.get('q') || '').trim()
+    const category = (searchParams.get('category') || '').trim()
 
-    const q = qRaw.trim()
-    const category = categoryRaw.trim()
+    const days = Math.max(1, Number(searchParams.get('days') || 30))
+    const topN = Math.max(1, Number(searchParams.get('top') || 8))
+    const since = new Date()
+    since.setDate(since.getDate() - days)
 
     const where = {
       isActive: true,
       deletedAt: null,
-      ...(q ? {
-        OR: [
-          { name: { contains: q } },
-          { description: { contains: q } },
-        ]
-      } : {}),
-      ...(category ? {
-        // ⬅️ FIX: relasi to-one harus pakai `is: { ... }`
-        category: { is: { slug: category } }
-      } : {}),
+      ...(q ? { OR: [{ name: { contains: q } }, { description: { contains: q } }] } : {}),
+      ...(category ? { category: { is: { slug: category } } } : {}),
     }
 
     const products = await prisma.product.findMany({
       where,
-      include: { category: true },
+      include: { category: { select: { id: true, name: true, slug: true } } },
       orderBy: { createdAt: 'desc' },
     })
 
-    return NextResponse.json(products)
-  } catch (err) {
-    console.error("❌ GET /api/products error:", err)
-    return NextResponse.json(
-      { message: "Server error while fetching products" },
-      { status: 500 }
-    )
-  }
-}
-
-// ========================================
-// POST /api/products  (ADMIN only) — tetap sama
-// ========================================
-export async function POST(req) {
-  const me = await getCurrentUser()
-  if (!me || me.role !== 'ADMIN') {
-    return NextResponse.json({ message: 'Forbidden' }, { status: 403 })
-  }
-
-  try {
-    const data = await req.json()
-
-    if (!data.name || !data.slug || !data.price || !data.categoryId) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 })
-    }
-    if (data.stock < 0) {
-      return NextResponse.json({ message: 'Stock must be >= 0' }, { status: 400 })
-    }
-    if (data.price < 0) {
-      return NextResponse.json({ message: 'Price must be >= 0' }, { status: 400 })
+    if (products.length === 0) {
+      return NextResponse.json([])
     }
 
-    const created = await prisma.product.create({
-      data: {
-        name: data.name,
-        slug: data.slug,
-        description: data.description || null,
-        price: data.price,
-        stock: data.stock ?? 0,
-        imageUrl: data.imageUrl || null,
-        categoryId: data.categoryId,
-        isActive: data.isActive ?? true,
-      }
+    const soldAgg = await prisma.orderItem.groupBy({
+      by: ['productId'],
+      _sum: { qty: true },
+      where: {
+        productId: { in: products.map((p) => p.id) },
+        order: { createdAt: { gte: since } },
+      },
     })
 
-    return NextResponse.json(created, { status: 201 })
+    const soldMap = new Map()
+    for (const row of soldAgg) {
+      soldMap.set(row.productId, Number(row._sum.qty || 0))
+    }
+
+    const ranked = products
+      .map((p) => ({
+        id: p.id,
+        sold: soldMap.get(p.id) || 0,
+        stock: p.stock,
+      }))
+      .sort((a, b) => b.sold - a.sold)
+
+    // ✅ Hanya produk dengan sold > 0 DAN stock > 0 yang bisa Best Seller
+    const positive = ranked.filter((r) => r.sold > 0 && r.stock > 0)
+
+    const bestIds = new Set(positive.slice(0, topN).map((r) => r.id))
+
+    const payload = products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      price: p.price,
+      stock: p.stock,
+      imageUrl: p.imageUrl,
+      description: p.description,
+      category: p.category,
+      sold: soldMap.get(p.id) || 0,
+      isBestSeller: bestIds.has(p.id),
+      createdAt: p.createdAt,
+    }))
+
+    return NextResponse.json(payload)
   } catch (err) {
-    console.error("❌ Error creating product:", err)
-    return NextResponse.json({ message: 'Invalid request' }, { status: 400 })
+    console.error('❌ GET /api/products error:', err)
+    return NextResponse.json(
+      { message: 'Server error while fetching products' },
+      { status: 500 }
+    )
   }
 }
