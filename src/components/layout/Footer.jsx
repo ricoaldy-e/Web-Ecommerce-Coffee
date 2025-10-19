@@ -1,4 +1,3 @@
-// src/components/layout/Footer.jsx
 "use client"
 
 import { useEffect, useRef, useState } from "react"
@@ -6,12 +5,12 @@ import { usePathname } from "next/navigation"
 
 const HIDE_ON = ["/admin", "/auth", "/checkout", "/cart", "/orders", "/profile", "/products"]
 
-const BRAND   = "Daily Beans"
+const BRAND = "COFFESST"
 const TAGLINE = "Setiap tegukan membawa makna kehidupan"
 const SUBLINE = "Have a Nice Day with a Cup of Coffee"
 const ADDRESS = "Tembalang, Semarang"
-const PHONE   = "+62 123 456 7890"
-const EMAIL   = "hello@dailybeans.com"
+const PHONE = "+62 123 456 7890"
+const EMAIL = "hello@COFFESST.com"
 
 const HOURS = [
   { label: "Senin – Jumat", value: "07.00 – 22.00" },
@@ -30,12 +29,6 @@ function onlyDigits(s = "") {
 
 export default function Footer() {
   const pathname = usePathname()
-  if (HIDE_ON.some(p => pathname.startsWith(p))) return null
-
-  const telHref = `tel:${onlyDigits(PHONE)}`
-  const waHref = `https://wa.me/${onlyDigits(PHONE)}`
-  const mailto = `mailto:${EMAIL}`
-
   const sectionRef = useRef(null)
   const [visible, setVisible] = useState(false)
 
@@ -53,28 +46,27 @@ export default function Footer() {
     return () => obs.disconnect()
   }, [])
 
+  if (HIDE_ON.some(p => pathname.startsWith(p))) return null
+
+  const telHref = `tel:${onlyDigits(PHONE)}`
+  const waHref = `https://wa.me/${onlyDigits(PHONE)}`
+  const mailto = `mailto:${EMAIL}`
+
   return (
     <footer className="mt-16">
-      {/* Garis pembatas halus di atas footer */}
       <div className="w-full h-px bg-gradient-to-r from-transparent via-amber-300/50 to-transparent" />
-
-      {/* Bagian utama footer */}
       <div className="bg-gradient-to-b from-amber-900 to-amber-950 text-amber-50">
         <div
           ref={sectionRef}
           className={`mx-auto max-w-7xl px-6 sm:px-10 lg:px-12 py-16 animate-on-scroll fade-in-up ${visible ? "animated" : ""}`}
         >
           <div className="grid gap-12 md:grid-cols-3 text-left">
-            
-            {/* Kolom 1 */}
             <div className="space-y-5">
               <h3 className="text-lg sm:text-xl font-bold tracking-wide uppercase text-amber-200">
                 {BRAND}
               </h3>
               <p className="text-amber-100 leading-relaxed max-w-xs">{TAGLINE}</p>
               <p className="text-amber-400 text-sm">{SUBLINE}</p>
-
-              {/* Socials */}
               <div className="mt-6 flex gap-4">
                 {Object.entries(SOCIAL).map(([name, link]) => (
                   <a
@@ -105,7 +97,6 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Kolom 2 */}
             <div className="space-y-8">
               <div>
                 <h4 className="font-semibold text-amber-200 uppercase tracking-wide">Kunjungi Kami</h4>
@@ -134,7 +125,6 @@ export default function Footer() {
               </div>
             </div>
 
-            {/* Kolom 3 */}
             <div className="space-y-6">
               <h4 className="font-semibold text-amber-200 uppercase tracking-wide">Jam Operasional</h4>
               <ul className="space-y-4">
@@ -149,7 +139,6 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom bar */}
         <div className="bg-amber-950 border-t border-amber-800/60 text-amber-300">
           <div className="mx-auto max-w-7xl px-6 py-5 flex flex-col sm:flex-row justify-between items-center text-sm">
             <div>© {new Date().getFullYear()} {BRAND}. All Rights Reserved.</div>

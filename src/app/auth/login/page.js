@@ -34,15 +34,15 @@ export default function LoginPage() {
 
   async function handleLogin(e) {
     e.preventDefault()
-    
+
     if (!email || !password) {
       setShake(true)
       setTimeout(() => setShake(false), 500)
       return
     }
-    
+
     setIsLoading(true)
-    
+
     const res = await fetch("/api/auth/login", {
       method: "POST",
       credentials: "include",
@@ -73,10 +73,7 @@ export default function LoginPage() {
     visible: { 
       opacity: 1, 
       y: 0,
-      transition: { 
-        duration: 0.6,
-        staggerChildren: 0.1
-      }
+      transition: { duration: 0.6, staggerChildren: 0.1 }
     }
   }
 
@@ -86,37 +83,46 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-amber-100 flex items-center justify-center p-6">
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+
+      {/* Background gambar (ganti background.png sesuai file kamu) */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: "url('/background.png')",
+        }}
+      />
+
+      {/* Overlay ringan transparan untuk efek lembut */}
+      <div className="absolute inset-0 backdrop-blur-[2px]" />
+
+      {/* Konten Utama */}
       <motion.div 
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="w-full max-w-md"
+        className="relative z-10 w-full max-w-md px-6"
       >
-        {/* Back Button */}
+        {/* Tombol kembali */}
         <motion.button
           variants={itemVariants}
           onClick={() => router.push("/products")}
           whileHover={{ scale: 1.05, x: -5 }}
           whileTap={{ scale: 0.95 }}
-          className="flex items-center gap-2 text-amber-700 hover:text-amber-800 mb-6 transition-all font-medium text-base group"
+          className="flex items-center gap-2 text-amber-900 hover:text-amber-700 mb-6 transition-all font-medium text-base"
         >
           <ArrowLeft className="w-5 h-5" />
           Kembali ke Beranda
         </motion.button>
 
-        {/* Login Card */}
+        {/* Kartu login transparan terang */}
         <motion.div 
           variants={itemVariants}
-          className="bg-white rounded-2xl shadow-xl p-6 border-2 border-amber-300"
+          className="bg-white/60 backdrop-blur-md rounded-2xl shadow-2xl p-6 border border-white/40"
         >
-          {/* Header */}
-          <motion.div 
-            variants={itemVariants}
-            className="text-center mb-6"
-          >
+          <motion.div variants={itemVariants} className="text-center mb-6">
             <div className="flex justify-center mb-4">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-600 to-amber-700 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-700 rounded-full flex items-center justify-center shadow-lg">
                 <Coffee className="w-8 h-8 text-white" />
               </div>
             </div>
@@ -125,13 +131,13 @@ export default function LoginPage() {
             </h1>
           </motion.div>
 
-          {/* Login Form */}
+          {/* Form login */}
           <motion.form 
             variants={containerVariants}
-            onSubmit={handleLogin} 
+            onSubmit={handleLogin}
             className="space-y-4"
           >
-            {/* Email Input */}
+            {/* Email */}
             <motion.div variants={itemVariants}>
               <label className="block text-base font-semibold text-amber-900 mb-2">
                 Email
@@ -143,13 +149,13 @@ export default function LoginPage() {
                   placeholder="Masukkan email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-11 pr-3 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all duration-300 text-amber-900 placeholder-amber-600/60 text-base"
+                  className="w-full pl-11 pr-3 py-3 rounded-lg border border-amber-200 bg-white/70 text-amber-900 placeholder-amber-600/70 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all duration-300 text-base"
                   required
                 />
               </div>
             </motion.div>
 
-            {/* Password Input */}
+            {/* Password */}
             <motion.div variants={itemVariants}>
               <label className="block text-base font-semibold text-amber-900 mb-2">
                 Password
@@ -161,7 +167,7 @@ export default function LoginPage() {
                   placeholder="Masukkan password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full pl-11 pr-11 py-3 rounded-lg border-2 border-amber-300 bg-amber-50/50 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 focus:outline-none transition-all duration-300 text-amber-900 placeholder-amber-600/60 text-base"
+                  className="w-full pl-11 pr-11 py-3 rounded-lg border border-amber-200 bg-white/70 text-amber-900 placeholder-amber-600/70 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 focus:outline-none transition-all duration-300 text-base"
                   required
                 />
                 <motion.button
@@ -169,24 +175,22 @@ export default function LoginPage() {
                   onClick={() => setShowPassword(!showPassword)}
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.9 }}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-amber-600 hover:text-amber-700 transition-all"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-amber-700 hover:text-amber-800 transition-all"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </motion.button>
               </div>
             </motion.div>
 
-            {/* Login Button */}
+            {/* Tombol Masuk */}
             <motion.button
               variants={itemVariants}
               type="submit"
               disabled={isLoading}
-              whileHover={{ 
-                boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)"
-              }}
+              whileHover={{ boxShadow: "0 10px 25px -5px rgba(245, 158, 11, 0.4)" }}
               whileTap={{ scale: 0.98 }}
               animate={shake ? { x: [0, -10, 10, -10, 10, 0] } : {}}
-              className="w-full py-3 bg-gradient-to-r from-amber-600 to-amber-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-amber-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
+              className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-700 text-white rounded-lg font-semibold shadow-lg hover:shadow-amber-500/25 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-base"
             >
               {isLoading ? (
                 <>
@@ -203,12 +207,9 @@ export default function LoginPage() {
             </motion.button>
           </motion.form>
 
-          {/* Additional Info dengan link yang lebih cerah */}
-          <motion.div 
-            variants={itemVariants}
-            className="mt-4 text-center"
-          >
-            <p className="text-sm text-gray-600">
+          {/* Link daftar */}
+          <motion.div variants={itemVariants} className="mt-4 text-center">
+            <p className="text-sm text-amber-800">
               Belum punya akun?{" "}
               <motion.button
                 onClick={() => router.push("/auth/register")}
@@ -217,7 +218,7 @@ export default function LoginPage() {
                   textShadow: "0 0 8px rgba(245, 158, 11, 0.4)"
                 }}
                 whileTap={{ scale: 0.95 }}
-                className="text-amber-500 font-semibold transition-all duration-200 bg-gradient-to-r from-amber-400 to-amber-500 bg-clip-text hover:text-transparent"
+                className="font-semibold text-amber-600 transition-all duration-200"
               >
                 Daftar di sini
               </motion.button>

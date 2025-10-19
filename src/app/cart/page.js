@@ -152,93 +152,102 @@ export default function CartPage() {
                 </div>
 
                 <div className="divide-y divide-amber-100">
-                  {items.map(it => (
-                    <div
-                      key={it.id}
-                      className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-amber-50 transition"
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        {selectedItems.includes(it.productId) ? (
-                          <CheckSquare
-                            className="w-5 h-5 text-amber-700 cursor-pointer"
-                            onClick={() => toggleSelectItem(it.productId)}
-                          />
-                        ) : (
-                          <Square
-                            className="w-5 h-5 text-amber-700 cursor-pointer"
-                            onClick={() => toggleSelectItem(it.productId)}
-                          />
-                        )}
+                  {items.map(it => {
+                    const productImg = it.product.image || it.product.imageUrl || ""
+                    return (
+                      <div
+                        key={it.productId}
+                        className="p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-amber-50 transition"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          {selectedItems.includes(it.productId) ? (
+                            <CheckSquare
+                              className="w-5 h-5 text-amber-700 cursor-pointer"
+                              onClick={() => toggleSelectItem(it.productId)}
+                            />
+                          ) : (
+                            <Square
+                              className="w-5 h-5 text-amber-700 cursor-pointer"
+                              onClick={() => toggleSelectItem(it.productId)}
+                            />
+                          )}
 
-                        <div className="flex items-center gap-4 flex-1">
-                          <div className="w-16 h-16 bg-amber-100 rounded-lg overflow-hidden flex items-center justify-center">
-                            {it.product.imageUrl ? (
-                              <Image
-                                src={it.product.imageUrl}
-                                alt={it.product.name}
-                                width={64}
-                                height={64}
-                                className="object-cover rounded-lg"
-                              />
-                            ) : (
-                              <Package className="w-8 h-8 text-amber-400" />
-                            )}
-                          </div>
-
-                          <div className="flex-1">
-                            <div className="font-semibold text-amber-900 text-base">{it.product.name}</div>
-                            <div className="text-sm text-amber-700 mt-1">
-                              Rp {Number(it.product.price).toLocaleString("id-ID")}
+                          <div className="flex items-center gap-4 flex-1">
+                            <div className="w-20 h-20 bg-amber-100 rounded-lg overflow-hidden flex items-center justify-center">
+                              {productImg ? (
+                                <Image
+                                  src={productImg}
+                                  alt={it.product.name}
+                                  width={80}
+                                  height={80}
+                                  className="object-cover w-full h-full rounded-lg"
+                                  onError={(e) => {
+                                    e.target.style.display = "none"
+                                    e.target.nextSibling.style.display = "flex"
+                                  }}
+                                />
+                              ) : (
+                                <Package className="w-10 h-10 text-amber-400" />
+                              )}
                             </div>
 
-                            <div className="flex items-center gap-3 mt-3">
-                              <button
-                                className="w-8 h-8 bg-amber-200 text-amber-900 rounded-full flex items-center justify-center hover:bg-amber-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={it.qty <= 1}
-                                onClick={() => updateQty(it, it.qty - 1)}
-                              >
-                                <Minus className="w-4 h-4" />
-                              </button>
-                              <div className="w-12 text-center font-semibold text-amber-900 border border-amber-300 rounded-lg py-1 bg-white">
-                                {it.qty}
+                            <div className="flex-1">
+                              <div className="font-semibold text-amber-900 text-base">
+                                {it.product.name}
                               </div>
-                              <button
-                                className="w-8 h-8 bg-amber-200 text-amber-900 rounded-full flex items-center justify-center hover:bg-amber-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={it.qty >= it.product.stock}
-                                onClick={() => updateQty(it, it.qty + 1)}
-                              >
-                                <Plus className="w-4 h-4" />
-                              </button>
+                              <div className="text-sm text-amber-700 mt-1">
+                                Rp {Number(it.product.price).toLocaleString("id-ID")}
+                              </div>
+
+                              <div className="flex items-center gap-3 mt-3">
+                                <button
+                                  className="w-8 h-8 bg-amber-200 text-amber-900 rounded-full flex items-center justify-center hover:bg-amber-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                  disabled={it.qty <= 1}
+                                  onClick={() => updateQty(it, it.qty - 1)}
+                                >
+                                  <Minus className="w-4 h-4" />
+                                </button>
+                                <div className="w-12 text-center font-semibold text-amber-900 border border-amber-300 rounded-lg py-1 bg-white">
+                                  {it.qty}
+                                </div>
+                                <button
+                                  className="w-8 h-8 bg-amber-200 text-amber-900 rounded-full flex items-center justify-center hover:bg-amber-300 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                                  disabled={it.qty >= it.product.stock}
+                                  onClick={() => updateQty(it, it.qty + 1)}
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
-                        <div className="text-right">
-                          <div className="font-bold text-lg text-amber-700">
-                            Rp {(Number(it.product.price) * it.qty).toLocaleString("id-ID")}
+                        <div className="flex items-center justify-between sm:justify-end gap-6 w-full sm:w-auto">
+                          <div className="text-right">
+                            <div className="font-bold text-lg text-amber-700">
+                              Rp {(Number(it.product.price) * it.qty).toLocaleString("id-ID")}
+                            </div>
+                            <div className="text-sm text-amber-600">
+                              {it.qty} × Rp {Number(it.product.price).toLocaleString("id-ID")}
+                            </div>
                           </div>
-                          <div className="text-sm text-amber-600">
-                            {it.qty} × Rp {Number(it.product.price).toLocaleString("id-ID")}
-                          </div>
+
+                          <button
+                            onClick={() => handleDeleteItem(it.productId)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
+                            title="Hapus item"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
                         </div>
-
-                        <button
-                          onClick={() => handleDeleteItem(it.productId)}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Hapus item"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             </div>
 
-            {/* Order Summary */}
+            {/* Ringkasan Pesanan */}
             <div className="lg:col-span-1">
               <div className="bg-white rounded-xl shadow-md border border-amber-200 p-6 sticky top-6">
                 <h3 className="text-xl font-bold text-amber-900 mb-4">Ringkasan Pesanan</h3>

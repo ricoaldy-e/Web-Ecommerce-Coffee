@@ -41,6 +41,10 @@ export default function NavbarClient({ initialUser }) {
   const isUser  = user?.role === "USER"
   const isGuest = !user
 
+  // Tentukan halaman saat ini
+  const isLoginPage = pathname === "/auth/login"
+  const isRegisterPage = pathname === "/auth/register"
+
   return (
     <nav className="flex flex-wrap items-center gap-4 p-4 border-b border-amber-200 bg-amber-50 text-amber-900 shadow-sm backdrop-blur-sm">
       {/* Brand */}
@@ -48,7 +52,7 @@ export default function NavbarClient({ initialUser }) {
         href="/" 
         className="font-bold text-lg text-amber-800 hover:text-amber-700 transition-colors"
       >
-        Daily Beans
+        COFFESST
       </Link>
 
       {/* Menu utama */}
@@ -94,18 +98,43 @@ export default function NavbarClient({ initialUser }) {
       {/* Auth */}
       {isGuest ? (
         <div className="flex gap-3">
-          <Link 
-            href="/auth/login" 
-            className="px-4 py-2 text-amber-700 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-colors"
-          >
-            Login
-          </Link>
-          <Link 
-            href="/auth/register" 
-            className="px-4 py-2 bg-amber-600 text-white hover:bg-amber-700 rounded-lg transition-colors shadow-sm"
-          >
-            Register
-          </Link>
+          {/* Tampilkan Register saja jika di halaman Login */}
+          {isLoginPage && (
+            <Link 
+              href="/auth/register" 
+              className="px-4 py-2 bg-amber-600 text-white hover:bg-amber-700 rounded-lg transition-colors shadow-sm"
+            >
+              Register
+            </Link>
+          )}
+          
+          {/* Tampilkan Login saja jika di halaman Register */}
+          {isRegisterPage && (
+            <Link 
+              href="/auth/login" 
+              className="px-4 py-2 text-amber-700 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-colors"
+            >
+              Login
+            </Link>
+          )}
+          
+          {/* Tampilkan keduanya jika bukan di halaman auth */}
+          {!isLoginPage && !isRegisterPage && (
+            <>
+              <Link 
+                href="/auth/login" 
+                className="px-4 py-2 text-amber-700 hover:text-amber-800 hover:bg-amber-100 rounded-lg transition-colors"
+              >
+                Login
+              </Link>
+              <Link 
+                href="/auth/register" 
+                className="px-4 py-2 bg-amber-600 text-white hover:bg-amber-700 rounded-lg transition-colors shadow-sm"
+              >
+                Register
+              </Link>
+            </>
+          )}
         </div>
       ) : (
         <div className="flex items-center gap-3">
