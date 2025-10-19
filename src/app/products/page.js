@@ -766,7 +766,7 @@ const categories = [
   { id: 3, name: "Robusta", slug: "robusta" },
   { id: 4, name: "Spesial", slug: "spesial" },
   { id: 5, name: "Blend", slug: "blend" },
-  { id: 6, name: "Susu", slug: "susu" }
+  { id: 6, name: "Contoh", slug: "Contoh" }
 ];
 
 export default function ProductsPage() {

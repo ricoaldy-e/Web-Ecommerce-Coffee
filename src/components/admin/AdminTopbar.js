@@ -38,7 +38,7 @@ export default function AdminTopbar({ onToggleSidebar }) {
             href="/admin"
             className="font-bold text-lg tracking-wide flex items-center gap-2 hover:text-amber-200 transition"
           >
-            Coffeast Admin
+            Coffesst Admin
           </Link>
 
           <span className="text-amber-200/70 mx-2">/</span>
